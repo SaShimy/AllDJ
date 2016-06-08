@@ -44,8 +44,16 @@ public class MainActivity extends YouTubeBaseActivity implements YouTubePlayer.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Button btnSend = (Button) findViewById(R.id.sendButton);
+        Button btnSign = (Button) findViewById(R.id.toSignUp);
         final EditText sendText = (EditText) findViewById(R.id.editText);
         assert btnSend != null;
+        btnSign.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent Activity = new Intent(MainActivity.this, SignUpActivity.class);
+                startActivity(Activity);
+            }
+        });
         btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -72,6 +80,7 @@ public class MainActivity extends YouTubeBaseActivity implements YouTubePlayer.O
                 queue.add(jsonRequest);
             }
         });
+
         /** Initializing YouTube player view **/
         YouTubePlayerView youTubePlayerView = (YouTubePlayerView) findViewById(R.id.youtube_player);
         youTubePlayerView.initialize(API_KEY, this);
