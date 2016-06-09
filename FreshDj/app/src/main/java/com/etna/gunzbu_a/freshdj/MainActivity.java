@@ -1,20 +1,14 @@
 package com.etna.gunzbu_a.freshdj;
 
 import android.content.Intent;
-import android.net.Uri;
-import android.support.v7.app.AppCompatActivity;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewManager;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -32,6 +26,11 @@ import com.google.android.youtube.player.YouTubePlayerView;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.util.List;
+
+import retrofit2.Call;
+
 public class MainActivity extends YouTubeBaseActivity implements YouTubePlayer.OnInitializedListener {
 
     public static final String API_KEY = "AIzaSyCqiRYh13_-Fjy6qCMO9zRP1reaG4S2K6w";
@@ -45,8 +44,16 @@ public class MainActivity extends YouTubeBaseActivity implements YouTubePlayer.O
         setContentView(R.layout.activity_main);
         Button btnSend = (Button) findViewById(R.id.sendButton);
         Button btnSign = (Button) findViewById(R.id.toSignUp);
+        Button btnPlaylist = (Button) findViewById(R.id.toPlaylist);
         final EditText sendText = (EditText) findViewById(R.id.editText);
         assert btnSend != null;
+        btnPlaylist.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                Intent Activity = new Intent(MainActivity.this, PlaylistActivity.class);
+                startActivity(Activity);
+            }
+        });
         btnSign.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -84,6 +91,28 @@ public class MainActivity extends YouTubeBaseActivity implements YouTubePlayer.O
         /** Initializing YouTube player view **/
         YouTubePlayerView youTubePlayerView = (YouTubePlayerView) findViewById(R.id.youtube_player);
         youTubePlayerView.initialize(API_KEY, this);
+
+        System.out.println("lol");
+    }
+
+    class ListRoomTask extends AsyncTask<String, Void, Void> {
+
+        @Override
+        protected Void doInBackground(String... params) {
+            ApiCalls client = ServiceGenerator.createService(ApiCalls.class);
+
+            Call<List<Room>> call = client.rooms();
+
+            try {
+                List<Room> rooms = call.execute().body();
+                for (Room room : rooms) {
+                    System.out.println(room.getName());
+                }
+            } catch (IOException e) {
+                // handle errors
+            }
+            return null;
+        }
     }
 
     @Override
