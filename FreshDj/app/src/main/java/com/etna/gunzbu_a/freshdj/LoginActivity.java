@@ -27,6 +27,8 @@ public class LoginActivity extends AppCompatActivity {
     public static final String KEY_CLIENTID = "client_id";
     public static final String KEY_CLIENTSECRET = "client_secret";
 
+    public static String TOKEN = "";
+
     EditText edUsername;
     EditText edPassword;
     @Override
