@@ -25,5 +25,4 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.3.0'
     compile 'com.github.erd:android-volley:1.0.0'
     compile files('libs/YouTubeAndroidPlayerApi.jar')
-    compile 'com.koushikdutta.ion:ion:2.+'
 }

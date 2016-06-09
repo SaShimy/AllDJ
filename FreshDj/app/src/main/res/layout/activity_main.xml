@@ -48,6 +48,13 @@
         android:text="Sign Up"
         android:id="@+id/toSignUp"
         android:layout_below="@+id/sendButton"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="56dp" />
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Login"
+        android:id="@+id/toLogin"
+        android:layout_below="@+id/toSignUp"
+        android:layout_centerHorizontal="true" />
 </RelativeLayout>
