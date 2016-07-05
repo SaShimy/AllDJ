@@ -59,4 +59,14 @@
         android:layout_below="@+id/sendButton"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="112dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="To Chat"
+        android:id="@+id/toChat"
+        android:layout_below="@+id/sendButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="168dp" />
+
 </RelativeLayout>
