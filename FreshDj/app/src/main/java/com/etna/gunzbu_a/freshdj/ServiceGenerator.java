@@ -1,15 +1,15 @@
 package com.etna.gunzbu_a.freshdj;
 
-import okhttp3.OkHttpClient;
+/*import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;*/
 
 /**
  * Created by Kevin_Tan on 09/06/2016.
  */
 public class ServiceGenerator {
 
-    public static final String API_BASE_URL = "http://apifreshdj.cloudapp.net";
+  /*  public static final String API_BASE_URL = "http://apifreshdj.cloudapp.net";
 
     private static OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
 
@@ -21,5 +21,5 @@ public class ServiceGenerator {
     public static <S> S createService(Class<S> serviceClass) {
         Retrofit retrofit = builder.client(httpClient.build()).build();
         return retrofit.create(serviceClass);
-    }
+    }*/
 }

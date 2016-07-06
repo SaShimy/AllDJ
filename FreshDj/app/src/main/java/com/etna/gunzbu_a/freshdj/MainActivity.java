@@ -29,7 +29,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.List;
 
-import retrofit2.Call;
+//import retrofit2.Call;
 
 public class MainActivity extends YouTubeBaseActivity implements YouTubePlayer.OnInitializedListener {
 
@@ -95,7 +95,7 @@ public class MainActivity extends YouTubeBaseActivity implements YouTubePlayer.O
         System.out.println("lol");
     }
 
-    class ListRoomTask extends AsyncTask<String, Void, Void> {
+    /*class ListRoomTask extends AsyncTask<String, Void, Void> {
 
         @Override
         protected Void doInBackground(String... params) {
@@ -113,7 +113,7 @@ public class MainActivity extends YouTubeBaseActivity implements YouTubePlayer.O
             }
             return null;
         }
-    }
+    }*/
 
     @Override
     public void onInitializationSuccess(Provider provider, YouTubePlayer player, boolean wasRestored) {
