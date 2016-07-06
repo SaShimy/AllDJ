@@ -53,7 +53,7 @@ public class PlaylistActivity extends MainActivity {
                         list = new ArrayList<Video>();
                         search = searchText.getText().toString();
                         search = search.replaceAll(" ", "+");
-                        urlcall = url +  "q=" + searchText.getText().toString() + "&key=" + API_KEY;
+                        urlcall = url +  "q=" + search + "&key=" + API_KEY;
                         Log.v("Test", urlcall);
                         RequestQueue queue = Volley.newRequestQueue(PlaylistActivity.this);
                         JsonObjectRequest jsonRequest = new JsonObjectRequest(urlcall, null,
