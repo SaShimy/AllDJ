@@ -1,12 +1,9 @@
 package com.etna.gunzbu_a.freshdj;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.os.Debug;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -135,5 +132,6 @@ public class PlaylistActivity extends MainActivity {
             }
 
         });
+
     }
 }
