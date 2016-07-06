@@ -58,7 +58,7 @@ public class MainActivity extends YouTubeBaseActivity implements YouTubePlayer.O
         btnChat.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                Intent Activity = new Intent(MainActivity.this, ChatActivity.class);
+                Intent Activity = new Intent(MainActivity.this, LogToChatActivity.class);
                 startActivity(Activity);
             }
         });
