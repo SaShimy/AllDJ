@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.ListViewCompat;
@@ -59,7 +60,7 @@ public class Home extends AppCompatActivity {
         createRoom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                createAlert(userToken);
+                createAlert(userToken, spinner, Rooms);
             }
         });
         Button profileButton = (Button) findViewById(R.id.profileButton);
@@ -72,10 +73,19 @@ public class Home extends AppCompatActivity {
                 startActivity(Activity);
             }
         });
+        final SwipeRefreshLayout swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
+        // Setup refresh listener which triggers new data loading
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                createList(spinner, Rooms);
+                swipeContainer.setRefreshing(false);
+            }
+        });
         Log.v(TAG, userToken);
     }
 
-    private void createAlert(final String userToken) {
+    private void createAlert(final String userToken, final ProgressBar spinner, final ListView Rooms) {
         AlertDialog.Builder builder = new AlertDialog.Builder(Home.this);
         builder.setTitle("Ajout d'un salon");
 
@@ -108,6 +118,7 @@ public class Home extends AppCompatActivity {
                                 try {
                                     JSONObject jResponse = new JSONObject(response);
                                     Toast.makeText(Home.this, jResponse.getString("message"), Toast.LENGTH_LONG).show();
+                                    createList(spinner, Rooms);
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }

@@ -20,6 +20,7 @@ import java.util.Map;
 
 public class Profile extends AppCompatActivity {
 
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,7 +29,7 @@ public class Profile extends AppCompatActivity {
         loadUserInfos(userToken);
     }
     private void loadUserInfos(final String userToken) {
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, "http://apifreshdj.cloudapp.net/user/api/me",
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, "http://apifreshdj.cloudapp.net/user/api/profile",
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {

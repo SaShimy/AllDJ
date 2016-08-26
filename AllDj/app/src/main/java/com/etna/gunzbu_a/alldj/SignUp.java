@@ -30,6 +30,7 @@ public class SignUp extends AppCompatActivity {
     EditText edUsername;
     EditText edPassword;
     EditText edEmail;
+    EditText edConfirmation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,12 +40,17 @@ public class SignUp extends AppCompatActivity {
         edUsername = (EditText) findViewById(R.id.username);
         edPassword = (EditText) findViewById(R.id.password);
         edEmail = (EditText) findViewById(R.id.email);
+        edConfirmation = (EditText) findViewById(R.id.passwordConfirmation);
 
         assert signUp != null;
         signUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                signUp();
+                Log.v("SU", "pass :" + edPassword.getText().toString() + " et conf :" + edConfirmation.getText().toString());
+                if (edConfirmation.getText().toString().equals(edPassword.getText().toString()))
+                    signUp();
+                else
+                    Toast.makeText(SignUp.this, "Les mots de passe doivent être identiques.", Toast.LENGTH_LONG).show();
             }
         });
     }
