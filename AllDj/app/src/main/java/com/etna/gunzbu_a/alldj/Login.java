@@ -61,7 +61,6 @@ public class Login extends AppCompatActivity {
             }
         });
     }
-
     private void logIn() {
         edUsername = (EditText) findViewById(R.id.loginUsername);
         edPassword = (EditText) findViewById(R.id.loginPassword);

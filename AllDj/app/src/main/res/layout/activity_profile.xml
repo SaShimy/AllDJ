@@ -113,15 +113,24 @@
             android:id="@+id/radioMale"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="male"
-            android:checked="true" />
+            android:text="Homme"
+            android:checked="false" />
 
         <RadioButton
             android:id="@+id/radioFemale"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="female" />
+            android:text="Femme"
+            android:checked="false" />
 
     </RadioGroup>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Mettre à jour"
+        android:id="@+id/updateButton"
+        android:layout_below="@+id/radioSex"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

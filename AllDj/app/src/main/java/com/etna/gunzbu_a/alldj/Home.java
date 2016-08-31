@@ -161,7 +161,6 @@ public class Home extends AppCompatActivity {
 
         builder.show();
     }
-
     private void createList(final ProgressBar spinner, final ListView Rooms){
         RequestQueue queue = Volley.newRequestQueue(Home.this);
 
