@@ -19,6 +19,9 @@
         </activity>
         <activity android:name="SignUpActivity"></activity>
         <activity android:name="PlaylistActivity"></activity>
+        <activity android:name="SearchActivity"></activity>
+        <activity android:name="PlayListVideosActivity"></activity>
+        <activity android:name="AddVideoActivity"></activity>
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />

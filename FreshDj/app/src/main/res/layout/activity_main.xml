@@ -54,9 +54,18 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="To PlayList"
-        android:id="@+id/toPlaylist"
+        android:text="To Search"
+        android:id="@+id/toSearch"
         android:layout_below="@+id/sendButton"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="112dp" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="PlayList"
+        android:id="@+id/toPlayList"
+        android:layout_below="@+id/sendButton"
+        android:layout_centerHorizontal="true" />
 </RelativeLayout>

@@ -7,7 +7,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="PlayLists"
+        android:text="Videos"
         android:id="@+id/textView"
         android:layout_gravity="center_horizontal" />
 
@@ -21,31 +21,10 @@
         android:layout_height="wrap_content"
         android:id="@+id/text_PlayList" />
 
-    <RadioGroup
-        android:id="@+id/radioGroup"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <RadioButton
-            android:id="@+id/radio_public"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="public"
-            android:checked="true"/>
-
-        <RadioButton
-            android:id="@+id/radio_private"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="private" />
-
-    </RadioGroup>
-
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="add"
-        android:id="@+id/addPlayList" />
+        android:id="@+id/addtoPlayList" />
 
 </LinearLayout>

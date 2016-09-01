@@ -44,13 +44,21 @@ public class MainActivity extends YouTubeBaseActivity implements YouTubePlayer.O
         setContentView(R.layout.activity_main);
         Button btnSend = (Button) findViewById(R.id.sendButton);
         Button btnSign = (Button) findViewById(R.id.toSignUp);
-        Button btnPlaylist = (Button) findViewById(R.id.toPlaylist);
+        Button btnSearch = (Button) findViewById(R.id.toSearch);
+        Button btnPlayList = (Button) findViewById(R.id.toPlayList);
         final EditText sendText = (EditText) findViewById(R.id.editText);
         assert btnSend != null;
-        btnPlaylist.setOnClickListener(new View.OnClickListener(){
+        btnPlayList.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
                 Intent Activity = new Intent(MainActivity.this, PlaylistActivity.class);
+                startActivity(Activity);
+            }
+        });
+        btnSearch.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                Intent Activity = new Intent(MainActivity.this, SearchActivity.class);
                 startActivity(Activity);
             }
         });
