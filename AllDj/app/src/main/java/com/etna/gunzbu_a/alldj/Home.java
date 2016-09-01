@@ -63,6 +63,14 @@ public class Home extends AppCompatActivity {
                 createAlert(userToken, spinner, Rooms);
             }
         });
+        Button chatButton = (Button) findViewById(R.id.button2);
+        chatButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent Activity = new Intent(Home.this, LogToChat.class);
+                startActivity(Activity);
+            }
+        });
         Button profileButton = (Button) findViewById(R.id.profileButton);
         assert profileButton != null;
         profileButton.setOnClickListener(new View.OnClickListener() {
@@ -84,7 +92,6 @@ public class Home extends AppCompatActivity {
         });
         Log.v(TAG, userToken);
     }
-
     private void createAlert(final String userToken, final ProgressBar spinner, final ListView Rooms) {
         AlertDialog.Builder builder = new AlertDialog.Builder(Home.this);
         builder.setTitle("Ajout d'un salon");

@@ -1,12 +1,15 @@
 package com.etna.gunzbu_a.alldj;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,10 +20,12 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,6 +35,7 @@ public class Profile extends AppCompatActivity {
     public static final String KEY_EMAIL = "mail";
     public static final String KEY_BD = "birthday";
     public static final String KEY_GENDER = "gender";
+    private String TAG = "Profile";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +48,13 @@ public class Profile extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 updateUserInfos(userToken);
+            }
+        });
+        ImageView profilePic = (ImageView) findViewById(R.id.profilePic);
+        profilePic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendAvatar(userToken);
             }
         });
     }
@@ -72,7 +85,13 @@ public class Profile extends AppCompatActivity {
                                     rFemale.toggle();
                                 }
                             }
-
+                            ImageView profilePic = (ImageView) findViewById(R.id.profilePic);
+                            String sURL = jResponse.getJSONObject("avatar").getString("path");
+                            Log.v(TAG, sURL);
+                            Glide.with(Profile.this).load(sURL).into(profilePic);
+                            //URL url = new URL();
+                            //Bitmap bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream());
+                            //profilePic.setImageBitmap(bmp);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -114,7 +133,7 @@ public class Profile extends AppCompatActivity {
             Gender = "female";
         }
         final String finalGender = Gender;
-        StringRequest stringRequest = new StringRequest(Request.Method.PUT, "http://apifreshdj.cloudapp.net/user/api/update",
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://apifreshdj.cloudapp.net/user/api/update",
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -136,7 +155,6 @@ public class Profile extends AppCompatActivity {
                 }) {
             public Map<String, String> getHeaders() {
                 Map<String, String> header = new HashMap<String, String>();
-                header.put("Content-Type", "application/json");
                 header.put("Authorization", "Bearer "+ userToken);
                 return header;
             }
@@ -156,6 +174,15 @@ public class Profile extends AppCompatActivity {
 
         RequestQueue requestQueue = Volley.newRequestQueue(Profile.this);
         requestQueue.add(stringRequest);
+    }
+    private void sendAvatar(final String userToken) {
+        int PICK_IMAGE_REQUEST = 1;
+        Intent intent = new Intent();
+        // Show only images, no videos or anything else
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        // Always show the chooser (if there are multiple options available)
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
     }
 }
 
