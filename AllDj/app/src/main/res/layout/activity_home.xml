@@ -96,6 +96,14 @@
                 android:text="Mon profil"
                 android:id="@+id/profileButton" />
 
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Mes playlists"
+                android:layout_alignLeft="@+id/profileButton"
+                android:layout_below="@+id/profileButton"
+                android:id="@+id/playlistsButton" />
+
         </RelativeLayout>
 
         <!-- List of Actions (pages) -->

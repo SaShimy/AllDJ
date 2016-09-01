@@ -28,7 +28,15 @@
         </activity>
         <meta-data
             android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version"/>
+            android:value="@integer/google_play_services_version" />
+
+        <activity
+            android:name=".PlayListsActivity"
+            android:label="@string/title_activity_play_lists"
+            android:theme="@style/AppTheme" />
+        <activity android:name=".PlayListVideosActivity" />
+        <activity android:name=".Search" />
+        <activity android:name=".AddVideo"></activity>
     </application>
 
 </manifest>

@@ -81,6 +81,16 @@ public class Home extends AppCompatActivity {
                 startActivity(Activity);
             }
         });
+        Button playlistsButton = (Button) findViewById(R.id.playlistsButton);
+        assert playlistsButton != null;
+        playlistsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent Activity = new Intent(Home.this, PlayListsActivity.class);
+                Activity.putExtra("userToken", userToken);
+                startActivity(Activity);
+            }
+        });
         final SwipeRefreshLayout swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
         // Setup refresh listener which triggers new data loading
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
