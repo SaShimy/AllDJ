@@ -11,10 +11,10 @@
         android:id="@+id/tV_titlepl"
         android:layout_gravity="center_horizontal" />
 
-    <ListView
+    <com.baoyz.swipemenulistview.SwipeMenuListView
+        android:id="@+id/listView_videos"
         android:layout_width="match_parent"
-        android:layout_height="306dp"
-        android:id="@+id/listView_videos" />
+        android:layout_height="366dp" />
 
     <Button
         android:layout_width="wrap_content"
