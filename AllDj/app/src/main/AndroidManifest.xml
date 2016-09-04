@@ -22,9 +22,10 @@
         <activity android:name=".Home" />
         <activity android:name=".Room" />
         <activity android:name=".SignUp" />
-        <activity android:name=".Profile" />
-        <activity android:name=".Chat" />
-
+        <activity android:name=".Profile"/>
+        <activity android:name=".Chat"/>
+        <activity android:name=".LogToChat">
+        </activity>
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
