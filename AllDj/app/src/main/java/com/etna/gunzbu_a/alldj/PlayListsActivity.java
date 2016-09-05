@@ -1,12 +1,17 @@
 package com.etna.gunzbu_a.alldj;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -24,19 +29,29 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import com.baoyz.swipemenulistview.SwipeMenu;
+import com.baoyz.swipemenulistview.SwipeMenuCreator;
+import com.baoyz.swipemenulistview.SwipeMenuItem;
+import com.baoyz.swipemenulistview.SwipeMenuListView;
+
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
+
 public class PlayListsActivity extends AppCompatActivity {
 
     public static final String KEY_NAME = "name";
     public static final String KEY_ISPUBLIC = "isPublic";
-    ListView listView;
+
+    //ListView listView;
+    SwipeMenuListView listView;
     Button addBtn;
 
     EditText text_Playlist;
@@ -49,12 +64,40 @@ public class PlayListsActivity extends AppCompatActivity {
 
         final String userToken = getIntent().getExtras().getString("userToken");
 
-        listView = (ListView) findViewById(R.id.listView);
+        listView = (SwipeMenuListView) findViewById(R.id.listView);
         addBtn = (Button) findViewById(R.id.addPlayList);
 
         text_Playlist = (EditText) findViewById(R.id.text_PlayList);
 
         list = new ArrayList<PlayList>();
+
+        final int width = (int) dipToPixels(this,90);
+
+
+        SwipeMenuCreator creator = new SwipeMenuCreator() {
+
+            @Override
+            public void create(SwipeMenu menu) {
+                // create "delete" item
+                SwipeMenuItem deleteItem = new SwipeMenuItem(
+                        getApplicationContext());
+                // set item background
+                deleteItem.setBackground(new ColorDrawable(Color.rgb(0xF9,
+                        0x3F, 0x25)));
+                // set item width
+                deleteItem.setWidth(width);
+                // set item title
+                deleteItem.setIcon(R.drawable.ic_delete);
+                // add to menu
+                menu.addMenuItem(deleteItem);
+            }
+        };
+
+        // set creator
+        listView.setMenuCreator(creator);
+
+
+
 
         final RequestQueue queue = Volley.newRequestQueue(PlayListsActivity.this);
         JsonArrayRequest jsonRequest = new JsonArrayRequest("http://apifreshdj.cloudapp.net/playlist/api/me", new Response.Listener<JSONArray>() {
@@ -83,6 +126,41 @@ public class PlayListsActivity extends AppCompatActivity {
                             startActivity(Activity);
                         }
                     });
+                    listView.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
+                            switch (index) {
+                                case 0:
+                                    try {
+                                        StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://apifreshdj.cloudapp.net/playlist/api/"+response.getJSONObject(position).getString("id")+"/remove",
+                                                new Response.Listener<String>() {
+                                                    @Override
+                                                    public void onResponse(String response) {
+                                                        Toast.makeText(PlayListsActivity.this,"La playlist a été supprimé.", Toast.LENGTH_LONG).show();
+                                                    }
+                                                },
+                                                new Response.ErrorListener() {
+                                                    @Override
+                                                    public void onErrorResponse(VolleyError error) {
+                                                        Toast.makeText(PlayListsActivity.this,error.toString(), Toast.LENGTH_LONG).show();
+                                                    }
+                                                }){
+                                            public Map<String, String> getHeaders() {
+                                                Map<String, String> header = new HashMap<String, String>();
+                                                header.put("Authorization", "Bearer " + userToken);
+                                                return header;
+                                            }
+                                        };
+                                        queue.add(stringRequest);
+
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                    break;
+                            }
+                            return false;
+                        }
+                    });
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -109,8 +187,8 @@ public class PlayListsActivity extends AppCompatActivity {
                 RadioGroup radiogroup = (RadioGroup) findViewById(R.id.radioGroup);
                 int selectedId = radiogroup.getCheckedRadioButtonId();
                 RadioButton btn_ispublic = (RadioButton) findViewById(selectedId);
-                if(btn_ispublic.getText() == "public") { ispublic = "true";}
-                else { ispublic = "false"; }
+                ispublic = btn_ispublic.getTag().toString();
+
                 final String name = text_Playlist.getText().toString().trim();
                 if (name.matches("")) {
                     Toast.makeText(PlayListsActivity.this,"Veuillez entrer un nom pour votre playlist.", Toast.LENGTH_LONG).show();
@@ -142,13 +220,16 @@ public class PlayListsActivity extends AppCompatActivity {
                             Map<String, String> header = new HashMap<String, String>();
                             header.put("Authorization", "Bearer " + userToken);
                             return header;
-
                         }
                     };
                     queue.add(stringRequest);
                 }
-                Toast.makeText(PlayListsActivity.this,"Votre nouvelle playlist " + name + " a été créée.", Toast.LENGTH_LONG).show();
+                Toast.makeText(PlayListsActivity.this,"Votre nouvelle playlist " +/* name +*/ " a été créée.", Toast.LENGTH_LONG).show();
             }
         });
+    }
+    public static float dipToPixels(Context context, float dipValue) {
+        DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dipValue, metrics);
     }
 }

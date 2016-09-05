@@ -60,7 +60,7 @@ public class AddVideo extends YouTubeBaseActivity implements YouTubePlayer.OnIni
             @Override
             public void onClick(View v) {
                 RequestQueue queue = Volley.newRequestQueue(AddVideo.this);
-                StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://apifreshdj.cloudapp.net/playlist/api/"+playlistId+"/addMusic",
+                StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://apifreshdj.cloudapp.net/playlist/api/"+playlistId+"/music/add",
                         new Response.Listener<String>() {
                             @Override
                             public void onResponse(String response) {

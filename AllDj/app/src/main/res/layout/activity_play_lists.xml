@@ -11,10 +11,10 @@
         android:id="@+id/textView"
         android:layout_gravity="center_horizontal" />
 
-    <ListView
+    <com.baoyz.swipemenulistview.SwipeMenuListView
+        android:id="@+id/listView"
         android:layout_width="match_parent"
-        android:layout_height="306dp"
-        android:id="@+id/listView" />
+        android:layout_height="366dp" />
 
     <EditText
         android:layout_width="match_parent"
@@ -32,12 +32,14 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text="public"
+            android:tag="true"
             android:checked="true"/>
 
         <RadioButton
             android:id="@+id/radio_private"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:tag="false"
             android:text="private" />
 
     </RadioGroup>
