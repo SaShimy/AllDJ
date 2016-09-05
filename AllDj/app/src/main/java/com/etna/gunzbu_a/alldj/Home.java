@@ -67,7 +67,7 @@ public class Home extends AppCompatActivity {
         chatButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent Activity = new Intent(Home.this, LogToChat.class);
+                Intent Activity = new Intent(Home.this, Room.class);
                 startActivity(Activity);
             }
         });
