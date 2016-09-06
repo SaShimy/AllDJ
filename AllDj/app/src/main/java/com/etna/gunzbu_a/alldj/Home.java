@@ -9,6 +9,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.ListViewCompat;
+import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
@@ -19,6 +20,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,6 +37,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -50,25 +53,19 @@ public class Home extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         final String userToken = getIntent().getExtras().getString("userToken");
+        final String userName = getIntent().getExtras().getString("userName");
+        Log.v(TAG, userName);
         final ProgressBar spinner = (ProgressBar)findViewById(R.id.progressBar);
         assert spinner != null;
         spinner.setVisibility(View.VISIBLE);
         final ListView Rooms = (ListView) findViewById(R.id.roomList);
-        createList(spinner, Rooms);
+        createList(spinner, Rooms, userName);
         FloatingActionButton createRoom = (FloatingActionButton) findViewById(R.id.createRoom);
         assert createRoom != null;
         createRoom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                createAlert(userToken, spinner, Rooms);
-            }
-        });
-        Button chatButton = (Button) findViewById(R.id.button2);
-        chatButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent Activity = new Intent(Home.this, Room.class);
-                startActivity(Activity);
+                newRoom(userToken, spinner, Rooms, userName);
             }
         });
         Button profileButton = (Button) findViewById(R.id.profileButton);
@@ -96,13 +93,13 @@ public class Home extends AppCompatActivity {
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                createList(spinner, Rooms);
+                createList(spinner, Rooms, userName);
                 swipeContainer.setRefreshing(false);
             }
         });
         Log.v(TAG, userToken);
     }
-    private void createAlert(final String userToken, final ProgressBar spinner, final ListView Rooms) {
+    private void createAlert(final String userToken, final ProgressBar spinner, final ListView Rooms, final String userName, final ArrayList<String> types) {
         AlertDialog.Builder builder = new AlertDialog.Builder(Home.this);
         builder.setTitle("Ajout d'un salon");
 
@@ -115,9 +112,10 @@ public class Home extends AppCompatActivity {
         edName.setHint("Nom du salon");
         layout.addView(edName);
 
-        final EditText edTypes = new EditText(context);
-        edTypes.setHint("Type de musique");
-        layout.addView(edTypes);
+        final Spinner sTypes = new Spinner(this);
+        ArrayAdapter<String> Adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, types);
+        sTypes.setAdapter(Adapter);
+        layout.addView(sTypes);
 
         builder.setView(layout);
 
@@ -126,7 +124,7 @@ public class Home extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 final String name = edName.getText().toString().trim();
-                final String types = edTypes.getText().toString().trim();
+                final String type = String.valueOf(sTypes.getSelectedItemPosition() + 1);
 
                 StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://apifreshdj.cloudapp.net/room/api/new",
                         new Response.Listener<String>() {
@@ -135,7 +133,7 @@ public class Home extends AppCompatActivity {
                                 try {
                                     JSONObject jResponse = new JSONObject(response);
                                     Toast.makeText(Home.this, jResponse.getString("message"), Toast.LENGTH_LONG).show();
-                                    createList(spinner, Rooms);
+                                    createList(spinner, Rooms, userName);
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
@@ -157,7 +155,7 @@ public class Home extends AppCompatActivity {
                     protected Map<String, String> getParams() {
                         Map<String, String> params = new HashMap<String, String>();
                         params.put(KEY_NAME, name);
-                        params.put(KEY_TYPES, types);
+                        params.put(KEY_TYPES, type);
                         Log.v("PAR", params.toString());
                         return params;
                     }
@@ -178,7 +176,7 @@ public class Home extends AppCompatActivity {
 
         builder.show();
     }
-    private void createList(final ProgressBar spinner, final ListView Rooms){
+    private void createList(final ProgressBar spinner, final ListView Rooms, final String userName){
         RequestQueue queue = Volley.newRequestQueue(Home.this);
 
         JsonArrayRequest jsonRequest = new JsonArrayRequest("http://apifreshdj.cloudapp.net/room/all",
@@ -204,12 +202,40 @@ public class Home extends AppCompatActivity {
                                 try {
                                     Activity.putExtra("id", response.getJSONObject((int) id).getInt("id"));
                                     Activity.putExtra("name", response.getJSONObject((int) id).getString("name"));
+                                    Activity.putExtra("username", userName);
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
                                 startActivity(Activity);
                             }
                         });
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+            }
+        });
+        queue.add(jsonRequest);
+    }
+    private void newRoom(final String userToken, final ProgressBar spinner, final ListView Rooms, final String userName) {
+        RequestQueue queue = Volley.newRequestQueue(Home.this);
+
+        JsonArrayRequest jsonRequest = new JsonArrayRequest("http://apifreshdj.cloudapp.net/music_type/types",
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(final JSONArray response) {
+                        ArrayList<String> types = new ArrayList<String>();
+                        try {
+                            Log.d("res", String.valueOf(response.length()));
+                            for (int i = 0; response.length() > i; i++)
+                            {
+                                types.add(i, response.getJSONObject(i).getString("name"));
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        Log.d("res", String.valueOf(types));
+                        createAlert(userToken, spinner, Rooms, userName, types);
                     }
                 }, new Response.ErrorListener() {
             @Override

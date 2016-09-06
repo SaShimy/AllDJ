@@ -69,7 +69,7 @@ public class Room extends ListActivity {
         String name = i.getExtras().getString("name");
         channel = name;
 
-        username = "USERNAME";
+        username = i.getExtras().getString("username");
         SharedPreferences sp = getSharedPreferences(ChatConstants.CHAT_PREFS,MODE_PRIVATE);
         SharedPreferences.Editor edit = sp.edit();
         edit.putString(ChatConstants.CHAT_USERNAME, username);
