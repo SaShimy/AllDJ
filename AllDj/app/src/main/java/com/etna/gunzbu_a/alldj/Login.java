@@ -74,6 +74,7 @@ public class Login extends AppCompatActivity {
                             JSONObject jResponse = new JSONObject(response);
                             Intent Activity = new Intent(Login.this, Home.class);
                             Activity.putExtra("userToken", jResponse.getString("access_token"));
+                            Activity.putExtra("userName", username);
                             startActivity(Activity);
                         } catch (JSONException e) {
                             e.printStackTrace();

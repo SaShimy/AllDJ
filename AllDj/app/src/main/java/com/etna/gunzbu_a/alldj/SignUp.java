@@ -54,7 +54,6 @@ public class SignUp extends AppCompatActivity {
             }
         });
     }
-
     private void signUp() {
         final String username = edUsername.getText().toString().trim();
         final String password = edPassword.getText().toString().trim();

@@ -19,4 +19,7 @@
     <string name="action_sign_out">Sign Out</string>
     <string name="here_now">Here Now:</string>
     <string name="title_activity_play_lists">PlayListsActivity</string>
+
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
 </resources>
