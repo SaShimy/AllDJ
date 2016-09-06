@@ -14,8 +14,8 @@
 
     <include
         android:id="@+id/tool_bar"
-        layout="@layout/tool_bar"
-        ></include>
+        layout="@layout/tool_bar">
+    </include>
 
     <ProgressBar
         android:layout_width="wrap_content"
@@ -54,7 +54,7 @@
         android:id="@+id/roomList"
         android:layout_alignParentEnd="true"
         android:layout_below="@+id/tool_bar"
-        android:layout_alignBottom="@+id/createRoom" />
+        android:layout_alignParentBottom="true" />
 
     <android.support.design.widget.FloatingActionButton
         android:src="@drawable/ic_playlist_add_black_24dp"
@@ -62,8 +62,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/createRoom"
-        android:layout_above="@+id/relativeLayout"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="47dp" />
 
 </RelativeLayout>
 

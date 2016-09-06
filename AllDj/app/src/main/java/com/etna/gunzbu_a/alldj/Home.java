@@ -226,7 +226,6 @@ public class Home extends AppCompatActivity {
                     public void onResponse(final JSONArray response) {
                         ArrayList<String> types = new ArrayList<String>();
                         try {
-                            Log.d("res", String.valueOf(response.length()));
                             for (int i = 0; response.length() > i; i++)
                             {
                                 types.add(i, response.getJSONObject(i).getString("name"));
@@ -234,7 +233,6 @@ public class Home extends AppCompatActivity {
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        Log.d("res", String.valueOf(types));
                         createAlert(userToken, spinner, Rooms, userName, types);
                     }
                 }, new Response.ErrorListener() {
