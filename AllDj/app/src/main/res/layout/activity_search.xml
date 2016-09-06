@@ -22,7 +22,9 @@
         android:layout_height="wrap_content"
         android:id="@+id/TextSearch"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentEnd="false"
+        android:layout_alignParentStart="false" />
 
     <Button
         android:layout_width="wrap_content"

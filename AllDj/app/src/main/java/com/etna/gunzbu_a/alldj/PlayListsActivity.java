@@ -69,10 +69,10 @@ public class PlayListsActivity extends AppCompatActivity {
 
         text_Playlist = (EditText) findViewById(R.id.text_PlayList);
 
-        list = new ArrayList<PlayList>();
-
         final int width = (int) dipToPixels(this,90);
+        final RequestQueue queue = Volley.newRequestQueue(PlayListsActivity.this);
 
+        RequestonAddbtn(addBtn, userToken, queue);
 
         SwipeMenuCreator creator = new SwipeMenuCreator() {
 
@@ -96,11 +96,10 @@ public class PlayListsActivity extends AppCompatActivity {
         // set creator
         listView.setMenuCreator(creator);
 
+        show_playlist(userToken, queue);
 
 
-
-        final RequestQueue queue = Volley.newRequestQueue(PlayListsActivity.this);
-        JsonArrayRequest jsonRequest = new JsonArrayRequest("http://apifreshdj.cloudapp.net/playlist/api/me", new Response.Listener<JSONArray>() {
+        /*JsonArrayRequest jsonRequest = new JsonArrayRequest("http://apifreshdj.cloudapp.net/playlist/api/me", new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(final JSONArray response) {
                 Log.v("arr", String.valueOf(response));
@@ -108,7 +107,7 @@ public class PlayListsActivity extends AppCompatActivity {
                     for(int i = 0; i < response.length(); i++){
                         list.add(new PlayList(response.getJSONObject(i).getString("name"),response.getJSONObject(i).getString("isPublic"),response.getJSONObject(i).getString("id")));
                     }
-                    PlayListAdapter adapter = new PlayListAdapter(PlayListsActivity.this, list);
+                    PlayListAdapter adapter = new P layListAdapter(PlayListsActivity.this, list);
                     listView.setAdapter(adapter);
                     listView.invalidateViews();
                     listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -177,9 +176,93 @@ public class PlayListsActivity extends AppCompatActivity {
                 return header;
             }
         };
-        queue.add(jsonRequest);
+        queue.add(jsonRequest);*/
+    }
 
-        addBtn.setOnClickListener(new View.OnClickListener() {
+    public void show_playlist(final String userToken, final RequestQueue queue) {
+        list = new ArrayList<PlayList>();
+        JsonArrayRequest jsonRequest = new JsonArrayRequest("http://apifreshdj.cloudapp.net/playlist/api/me", new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(final JSONArray response) {
+                Log.v("arr", String.valueOf(response));
+                try {
+                    for(int i = 0; i < response.length(); i++){
+                        list.add(new PlayList(response.getJSONObject(i).getString("name"),response.getJSONObject(i).getString("isPublic"),response.getJSONObject(i).getString("id")));
+                    }
+                    PlayListAdapter adapter = new PlayListAdapter(PlayListsActivity.this, list);
+                    listView.setAdapter(adapter);
+                    listView.invalidateViews();
+                    listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            Intent Activity = new Intent(PlayListsActivity.this, PlayListVideosActivity.class);
+                            try {
+                                Activity.putExtra("playlistId", response.getJSONObject(position).getString("id"));
+                                Activity.putExtra("name", response.getJSONObject(position).getString("name"));
+                                Activity.putExtra("isPublic", response.getJSONObject(position).getString("isPublic"));
+                                Activity.putExtra("userToken", userToken);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            startActivity(Activity);
+                        }
+                    });
+                    listView.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
+                            switch (index) {
+                                case 0:
+                                    try {
+                                        StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://apifreshdj.cloudapp.net/playlist/api/"+response.getJSONObject(position).getString("id")+"/remove",
+                                                new Response.Listener<String>() {
+                                                    @Override
+                                                    public void onResponse(String response) {
+                                                        Toast.makeText(PlayListsActivity.this,"La playlist a été supprimé.", Toast.LENGTH_LONG).show();
+                                                        show_playlist(userToken, queue);
+                                                    }
+                                                },
+                                                new Response.ErrorListener() {
+                                                    @Override
+                                                    public void onErrorResponse(VolleyError error) {
+                                                        Toast.makeText(PlayListsActivity.this,error.toString(), Toast.LENGTH_LONG).show();
+                                                    }
+                                                }){
+                                            public Map<String, String> getHeaders() {
+                                                Map<String, String> header = new HashMap<String, String>();
+                                                header.put("Authorization", "Bearer " + userToken);
+                                                return header;
+                                            }
+                                        };
+                                        queue.add(stringRequest);
+
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                    break;
+                            }
+                            return false;
+                        }
+                    });
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        }) {
+            public Map<String, String> getHeaders() {
+                Map<String, String> header = new HashMap<String, String>();
+                header.put("Authorization", "Bearer " + userToken );
+                return header;
+            }
+        };
+        queue.add(jsonRequest);
+    }
+    public void RequestonAddbtn( final Button test, final String userToken, final RequestQueue queue) {
+        test.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 final String ispublic;
@@ -198,6 +281,8 @@ public class PlayListsActivity extends AppCompatActivity {
                             new Response.Listener<String>() {
                                 @Override
                                 public void onResponse(String response) {
+                                    show_playlist(userToken, queue);
+                                    text_Playlist.setText("");
                                 }
                             },
                             new Response.ErrorListener() {
@@ -224,7 +309,7 @@ public class PlayListsActivity extends AppCompatActivity {
                     };
                     queue.add(stringRequest);
                 }
-                Toast.makeText(PlayListsActivity.this,"Votre nouvelle playlist " +/* name +*/ " a été créée.", Toast.LENGTH_LONG).show();
+                Toast.makeText(PlayListsActivity.this,"Votre nouvelle playlist " + " a été créée.", Toast.LENGTH_LONG).show();
             }
         });
     }

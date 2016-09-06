@@ -112,7 +112,13 @@ public class AddVideo extends YouTubeBaseActivity implements YouTubePlayer.OnIni
 
         /** Start buffering **/
         if (!wasRestored) {
-            player.cueVideo(VIDEOID);
+            //set video to a playlist but dont play it automatically
+            //player.cueVideo(VIDEOID);
+            // play automatically the video
+            player.loadVideo(VIDEOID);
+            // play automatically the video at a settime in millisecond 2000ms = 2s 20000ms = 20s
+            // player.loadVideo(VIDEOID, 20000);
+
         }
     }
     @Override

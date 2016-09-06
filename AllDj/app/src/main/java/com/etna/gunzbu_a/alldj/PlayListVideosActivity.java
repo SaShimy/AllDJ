@@ -12,6 +12,7 @@ import android.util.TypedValue;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,15 +43,24 @@ public class PlayListVideosActivity extends AppCompatActivity {
 
     TextView playlist_title;
     SwipeMenuListView listView_videos;
-    final String urlcall = "http://apifreshdj.cloudapp.net/playlist/api/";
-    List<Video> list;
+    final String urlcall_videos = "http://apifreshdj.cloudapp.net/playlist/api/";
+    List<Video> list_videos;
+
+    ListView listView;
+    Button searchBtn;
+    EditText searchText;
+    String search;
+    List<Video> list_search;
+    String urlcall_search;
+    private static String url = "https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=20&";
+    private static String API_KEY = "AIzaSyCqiRYh13_-Fjy6qCMO9zRP1reaG4S2K6w";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play_list_videos);
 
-        list = new ArrayList<Video>();
         final String userToken = getIntent().getExtras().getString("userToken");
         final String playlistId = getIntent().getExtras().getString("playlistId");
         final String name = getIntent().getExtras().getString("name");
@@ -59,19 +69,11 @@ public class PlayListVideosActivity extends AppCompatActivity {
         playlist_title = (TextView) findViewById(R.id.tV_titlepl);
         listView_videos = (SwipeMenuListView) findViewById(R.id.listView_videos);
 
-        playlist_title.setText(name);
+        listView = (ListView) findViewById(R.id.list);
+        searchBtn = (Button) findViewById(R.id.SearchBtn);
+        searchText = (EditText) findViewById(R.id.TextSearch);
 
-        Button addBtn = (Button) findViewById(R.id.addtoPlayList);
-        addBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent Activity = new Intent(PlayListVideosActivity.this, Search.class);
-                Activity.putExtra("userToken", userToken);
-                Activity.putExtra("playlistId", playlistId);
-                Activity.putExtra("playlistName", name);
-                startActivity(Activity);
-            }
-        });
+        playlist_title.setText(name);
 
         final int width = (int) dipToPixels(this,90);
 
@@ -99,19 +101,102 @@ public class PlayListVideosActivity extends AppCompatActivity {
 
         final RequestQueue queue = Volley.newRequestQueue(PlayListVideosActivity.this);
 
-        JsonObjectRequest jsonRequest = new JsonObjectRequest(urlcall + playlistId + "/details", null,
+        show_playlist_videos(queue, userToken, playlistId);
+        set_searchbtn(searchBtn, queue, userToken, playlistId, name);
+    }
+
+    public void set_searchbtn(Button searchBtn, final RequestQueue queue, final String userToken, final String playlistId, final String name) {
+        searchBtn.setOnClickListener(
+                new View.OnClickListener(){
+                    @Override
+                    public void onClick(View v) {
+                        list_search = new ArrayList<Video>();
+                        search = searchText.getText().toString();
+                        search = search.replaceAll(" ", "+");
+                        urlcall_search = url +  "q=" + search + "&key=" + API_KEY;
+
+                        JsonObjectRequest jsonRequest = new JsonObjectRequest(urlcall_search, null,
+                                new Response.Listener<JSONObject>() {
+                                    @Override
+                                    public void onResponse(final JSONObject response) {
+                                        try {
+                                            final JSONArray arr = response.getJSONArray("items");
+                                            for (int i = 0; i < arr.length(); i++) {
+                                                JSONObject tmp = arr.getJSONObject(i);
+                                                JSONObject objectId = tmp.getJSONObject("id");
+                                                JSONObject objectSnippet = tmp.getJSONObject("snippet");
+                                                String thumbnailurl = objectSnippet.getJSONObject("thumbnails").getJSONObject("default").getString("url");
+                                                if (objectId.has("videoId")) {
+                                                    list_search.add(new Video(objectSnippet.getString("title"), objectId.getString("videoId"), objectSnippet.getString("channelTitle"), thumbnailurl));
+                                                }
+                                            }
+                                            videoAdapter adapter = new videoAdapter(PlayListVideosActivity.this, list_search);
+                                            listView.setAdapter(adapter);
+                                            listView.invalidateViews();
+                                            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+                                                @Override
+                                                public void onItemClick(AdapterView<?> parent, View view,
+                                                                        int position, long id) {
+                                                    Intent Activity = new Intent(PlayListVideosActivity.this, AddVideo.class);
+                                                    try {
+                                                        Log.v("position", String.valueOf(position));
+                                                        int i = 0,  y = 0;
+                                                        for (; y <= position; i++) {
+                                                            JSONObject tmp = arr.getJSONObject(i);
+                                                            JSONObject objectId = tmp.getJSONObject("id");
+                                                            if(objectId.has("videoId")){
+                                                                y++;
+                                                            }
+                                                        }
+                                                        JSONObject tmp = arr.getJSONObject(i - 1);
+                                                        String thumbnailurl = tmp.getJSONObject("snippet").getJSONObject("thumbnails").getJSONObject("default").getString("url");
+
+                                                        Activity.putExtra("userToken", userToken);
+                                                        Activity.putExtra("playlistId", playlistId);
+                                                        Activity.putExtra("playlistName", name);
+                                                        Activity.putExtra("title", tmp.getJSONObject("snippet").getString("title"));
+                                                        Activity.putExtra("videoId", tmp.getJSONObject("id").getString("videoId"));
+                                                        Activity.putExtra("channelTitle", tmp.getJSONObject("snippet").getString("channelTitle"));
+                                                        Activity.putExtra("thumbnailUrl", thumbnailurl);
+
+                                                    } catch (JSONException e) {
+                                                        e.printStackTrace();
+                                                    }
+                                                    startActivity(Activity);
+                                                }
+
+                                            });
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
+
+                                    }
+                                }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                            }
+                        });
+                        queue.add(jsonRequest);
+                    }
+                }
+        );
+    }
+
+    public void show_playlist_videos(final RequestQueue queue, final String userToken, final String playlistId) {
+        list_videos = new ArrayList<Video>();
+        JsonObjectRequest jsonRequest = new JsonObjectRequest(urlcall_videos + playlistId + "/details", null,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(final JSONObject response) {
-                        Log.v("test", String.valueOf(response));
                         try {
                             final JSONArray arr;
                             arr = response.getJSONArray("musics");
                             if(arr.length() != 0) {
                                 for (int i = 0; i < arr.length(); i++) {
-                                    list.add(new Video(arr.getJSONObject(i).getString("name"), arr.getJSONObject(i).getString("music_yt_id"), "", arr.getJSONObject(i).getString("img_url")));
+                                    list_videos.add(new Video(arr.getJSONObject(i).getString("name"), arr.getJSONObject(i).getString("music_yt_id"), "", arr.getJSONObject(i).getString("img_url")));
                                 }
-                                videoAdapter adapter = new videoAdapter(PlayListVideosActivity.this, list);
+                                videoAdapter adapter = new videoAdapter(PlayListVideosActivity.this, list_videos);
                                 listView_videos.setAdapter(adapter);
                                 listView_videos.invalidateViews();
                             /*listView_videos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -150,6 +235,7 @@ public class PlayListVideosActivity extends AppCompatActivity {
                                                                 @Override
                                                                 public void onResponse(String response) {
                                                                     Toast.makeText(PlayListVideosActivity.this,"La musique a été supprimé.", Toast.LENGTH_LONG).show();
+                                                                    show_playlist_videos(queue,userToken,playlistId);
                                                                 }
                                                             },
                                                             new Response.ErrorListener() {
@@ -175,12 +261,12 @@ public class PlayListVideosActivity extends AppCompatActivity {
                                     }
                                 });
 
-                            if(arr.length() == 1 || arr.length() == 0) {
-                                Toast.makeText(PlayListVideosActivity.this, "Il y a " + arr.length() + " musique.", Toast.LENGTH_LONG).show();
-                            }
-                            else {
-                                Toast.makeText(PlayListVideosActivity.this, "Il y a " + arr.length() + " musiques.", Toast.LENGTH_LONG).show();
-                            }
+                                if(arr.length() == 1 || arr.length() == 0) {
+                                    Toast.makeText(PlayListVideosActivity.this, "Il y a " + arr.length() + " musique.", Toast.LENGTH_LONG).show();
+                                }
+                                else {
+                                    Toast.makeText(PlayListVideosActivity.this, "Il y a " + arr.length() + " musiques.", Toast.LENGTH_LONG).show();
+                                }
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -201,6 +287,7 @@ public class PlayListVideosActivity extends AppCompatActivity {
         };
         queue.add(jsonRequest);
     }
+
     public static float dipToPixels(Context context, float dipValue) {
         DisplayMetrics metrics = context.getResources().getDisplayMetrics();
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dipValue, metrics);

@@ -14,12 +14,30 @@
     <com.baoyz.swipemenulistview.SwipeMenuListView
         android:id="@+id/listView_videos"
         android:layout_width="match_parent"
-        android:layout_height="366dp" />
+        android:layout_height="216dp" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/TextSearch"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="add"
-        android:id="@+id/addtoPlayList" />
+        android:text="Search"
+        android:id="@+id/SearchBtn"
+        android:layout_alignParentTop="true"
+        android:layout_alignEnd="@+id/list"
+        android:layout_gravity="right" />
+
+    <ListView
+        android:id="@+id/list"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_below="@+id/TextSearch"
+        android:layout_alignParentEnd="true">
+    </ListView>
 
 </LinearLayout>
