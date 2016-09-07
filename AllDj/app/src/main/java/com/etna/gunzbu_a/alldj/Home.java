@@ -73,7 +73,7 @@ public class Home extends AppCompatActivity {
         assert spinner != null;
         spinner.setVisibility(View.VISIBLE);
         final ListView Rooms = (ListView) findViewById(R.id.roomList);
-        createList(spinner, Rooms, userName);
+        createList(spinner, Rooms, userName, userToken);
         FloatingActionButton createRoom = (FloatingActionButton) findViewById(R.id.createRoom);
         assert createRoom != null;
         createRoom.setOnClickListener(new View.OnClickListener() {
@@ -107,7 +107,7 @@ public class Home extends AppCompatActivity {
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                createList(spinner, Rooms, userName);
+                createList(spinner, Rooms, userName, userToken);
                 swipeContainer.setRefreshing(false);
             }
         });
@@ -147,7 +147,7 @@ public class Home extends AppCompatActivity {
                                 try {
                                     JSONObject jResponse = new JSONObject(response);
                                     Toast.makeText(Home.this, jResponse.getString("message"), Toast.LENGTH_LONG).show();
-                                    createList(spinner, Rooms, userName);
+                                    createList(spinner, Rooms, userName, userToken);
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
@@ -190,7 +190,7 @@ public class Home extends AppCompatActivity {
 
         builder.show();
     }
-    private void createList(final ProgressBar spinner, final ListView Rooms, final String userName){
+    private void createList(final ProgressBar spinner, final ListView Rooms, final String userName, final String userToken){
         RequestQueue queue = Volley.newRequestQueue(Home.this);
 
         JsonArrayRequest jsonRequest = new JsonArrayRequest("http://apifreshdj.cloudapp.net/room/all",
@@ -214,9 +214,10 @@ public class Home extends AppCompatActivity {
                             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                                 Intent Activity = new Intent(Home.this, Room.class);
                                 try {
-                                    Activity.putExtra("id", response.getJSONObject((int) id).getInt("id"));
+                                    Activity.putExtra("id", response.getJSONObject((int) id).getString("id"));
                                     Activity.putExtra("name", response.getJSONObject((int) id).getString("name"));
                                     Activity.putExtra("username", userName);
+                                    Activity.putExtra("userToken", userToken);
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
