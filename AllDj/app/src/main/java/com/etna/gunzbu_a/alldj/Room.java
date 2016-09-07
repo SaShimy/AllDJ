@@ -83,6 +83,7 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
     public static Integer TIME_VID = 0;
     public static String USERTOKEN = "";
     public static String ROOMID = "";
+    public static Boolean is_inqueue=false;
 
 
     public Button JoinQueue;
@@ -145,7 +146,9 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
         this.JoinQueue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                joinqueue(userToken, id, queue);
+                if(is_master == false) {
+                    joinqueue(userToken, id, queue);
+                }
             }
         });
 
@@ -153,6 +156,38 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
         playvideo(userToken, queue, id, youTubePlayerView);
     }
 
+
+
+    public void leavequeue() {
+        final RequestQueue queue = Volley.newRequestQueue(Room.this);
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://apifreshdj.cloudapp.net/room/api/"+ ROOMID +"/waiting_list/leave",
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.v("ok", "queue left");
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(Room.this, error.toString(), Toast.LENGTH_LONG).show();
+                        Log.v("ERR", error.toString());
+                    }
+                }) {
+            public Map<String, String> getHeaders() {
+                Map<String, String> header = new HashMap<String, String>();
+                header.put("Authorization", "Bearer " + USERTOKEN);
+                return header;
+            }
+        };
+        queue.add(stringRequest);
+    }
+    @Override
+    public void onBackPressed() {
+        Log.v("back", "ok");
+        leavequeue();
+        super.onBackPressed();
+    }
     public void playvideo(final String userToken, final RequestQueue queue, final String RoomId, final YouTubePlayerView youTubePlayerView) {
         final JsonObjectRequest jsonRequest = new JsonObjectRequest("http://apifreshdj.cloudapp.net/room/api/" + RoomId + "/music", null,
                 new Response.Listener<JSONObject>() {
@@ -163,6 +198,10 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
                             try {
                                 VIDEOID = response.getString("music_id");
                                 is_master = response.getBoolean("is_master");
+                                if(is_master == true) {
+                                    is_inqueue = false;
+                                    JoinQueue.setText("Rejoindre \n la file d'attente");
+                                }
                                 if(response.getInt("time") < 3) {
                                     TIME_VID = 0;
                                 }
@@ -256,54 +295,96 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
 
                                                     try {
                                                         Log.v("position", String.valueOf(position));
-                                                        int i = 0,  y = 0;
+                                                        int i = 0, y = 0;
                                                         for (; y <= position; i++) {
                                                             JSONObject tmp = arr.getJSONObject(i);
                                                             JSONObject objectId = tmp.getJSONObject("id");
-                                                            if(objectId.has("videoId")){
+                                                            if (objectId.has("videoId")) {
                                                                 y++;
                                                             }
                                                         }
                                                         final JSONObject tmp = arr.getJSONObject(i - 1);
 
-                                                        StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://apifreshdj.cloudapp.net/room/api/"+ ROOMID +"/waiting_list/join",
-                                                                new Response.Listener<String>() {
-                                                                    @Override
-                                                                    public void onResponse(String response) {
-                                                                        Log.v("ok", "queue joined");
-                                                                        YouTubePlayerView youTubePlayerView = (YouTubePlayerView) findViewById(R.id.youtube_player);
-                                                                        playvideo(userToken, queue, ROOMID, youTubePlayerView);
+                                                        if (is_inqueue == false) {
+                                                            StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://apifreshdj.cloudapp.net/room/api/" + ROOMID + "/waiting_list/join",
+                                                                    new Response.Listener<String>() {
+                                                                        @Override
+                                                                        public void onResponse(String response) {
+                                                                            Log.v("ok", "queue joined");
+                                                                            JoinQueue.setText("Changer la musique");
+                                                                            YouTubePlayerView youTubePlayerView = (YouTubePlayerView) findViewById(R.id.youtube_player);
+                                                                            playvideo(userToken, queue, ROOMID, youTubePlayerView);
+                                                                            is_inqueue = true;
+                                                                        }
+                                                                    },
+                                                                    new Response.ErrorListener() {
+                                                                        @Override
+                                                                        public void onErrorResponse(VolleyError error) {
+                                                                            Toast.makeText(Room.this, error.toString(), Toast.LENGTH_LONG).show();
+                                                                            Log.v("ERR", error.toString());
+                                                                        }
+                                                                    }) {
+                                                                @Override
+                                                                protected Map<String, String> getParams() {
+                                                                    Map<String, String> params = new HashMap<>();
+                                                                    try {
+                                                                        params.put("musicId", tmp.getJSONObject("id").getString("videoId"));
+                                                                    } catch (JSONException e) {
+                                                                        e.printStackTrace();
                                                                     }
-                                                                },
-                                                                new Response.ErrorListener() {
-                                                                    @Override
-                                                                    public void onErrorResponse(VolleyError error) {
-                                                                        Toast.makeText(Room.this, error.toString(), Toast.LENGTH_LONG).show();
-                                                                        Log.v("ERR", error.toString());
-                                                                    }
-                                                                }) {
-                                                            @Override
-                                                            protected Map<String, String> getParams() {
-                                                                Map<String, String> params = new HashMap<>();
-                                                                try {
-                                                                    params.put("musicId", tmp.getJSONObject("id").getString("videoId"));
-                                                                } catch (JSONException e) {
-                                                                    e.printStackTrace();
+                                                                    Log.v("PAR", params.toString());
+                                                                    return params;
                                                                 }
-                                                                Log.v("PAR", params.toString());
-                                                                return params;
-                                                            }
 
-                                                            public Map<String, String> getHeaders() {
-                                                                Map<String, String> header = new HashMap<String, String>();
-                                                                header.put("Authorization", "Bearer " + userToken);
-                                                                return header;
-                                                            }
-                                                        };
-                                                        queue.add(stringRequest);
-                                                    } catch (JSONException e) {
-                                                        e.printStackTrace();
-                                                    }
+                                                                public Map<String, String> getHeaders() {
+                                                                    Map<String, String> header = new HashMap<String, String>();
+                                                                    header.put("Authorization", "Bearer " + userToken);
+                                                                    return header;
+                                                                }
+                                                            };
+                                                            queue.add(stringRequest);
+                                                        }
+                                                        else if(is_inqueue == true) {
+                                                            StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://apifreshdj.cloudapp.net/room/api/" + ROOMID + "/waiting_list/music/update",
+                                                                    new Response.Listener<String>() {
+                                                                        @Override
+                                                                        public void onResponse(String response) {
+                                                                            Log.v("ok", "music changed");
+                                                                            YouTubePlayerView youTubePlayerView = (YouTubePlayerView) findViewById(R.id.youtube_player);
+                                                                            playvideo(userToken, queue, ROOMID, youTubePlayerView);
+                                                                        }
+                                                                    },
+                                                                    new Response.ErrorListener() {
+                                                                        @Override
+                                                                        public void onErrorResponse(VolleyError error) {
+                                                                            Toast.makeText(Room.this, error.toString(), Toast.LENGTH_LONG).show();
+                                                                            Log.v("ERR", error.toString());
+                                                                        }
+                                                                    }) {
+                                                                @Override
+                                                                protected Map<String, String> getParams() {
+                                                                    Map<String, String> params = new HashMap<>();
+                                                                    try {
+                                                                        params.put("musicId", tmp.getJSONObject("id").getString("videoId"));
+                                                                    } catch (JSONException e) {
+                                                                        e.printStackTrace();
+                                                                    }
+                                                                    Log.v("PAR", params.toString());
+                                                                    return params;
+                                                                }
+
+                                                                public Map<String, String> getHeaders() {
+                                                                    Map<String, String> header = new HashMap<String, String>();
+                                                                    header.put("Authorization", "Bearer " + userToken);
+                                                                    return header;
+                                                                }
+                                                            };
+                                                            queue.add(stringRequest);
+                                                        }
+                                                        }catch(JSONException e){
+                                                            e.printStackTrace();
+                                                        }
+
                                                     ad.dismiss();
                                                 }
 
