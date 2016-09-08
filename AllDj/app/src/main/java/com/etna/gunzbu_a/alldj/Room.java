@@ -85,7 +85,7 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
     public static Integer TIME_VID = 0;
     public static String USERTOKEN = "";
     public static String ROOMID = "";
-    public static Boolean is_inqueue=false;
+    public static Boolean is_inqueue;
 
 
     public Button JoinQueue;
@@ -97,6 +97,7 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
         setContentView(R.layout.activity_room);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         is_initialized = false;
+        is_inqueue = false;
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
         mSharedPrefs = getSharedPreferences(ChatConstants.CHAT_PREFS, MODE_PRIVATE);
