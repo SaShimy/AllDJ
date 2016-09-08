@@ -29,25 +29,7 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/swipeContainer"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-    </android.support.v4.widget.SwipeRefreshLayout>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Salons"
-        android:id="@+id/roomTitle"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
-
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/relativeLayout"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true">
-
-    </RelativeLayout>
+        android:layout_height="match_parent"/>
 
     <ListView
         android:layout_width="wrap_content"
@@ -82,31 +64,30 @@
             android:id="@+id/profileBox"
             android:layout_width="match_parent"
             android:layout_height="100dp"
-            android:background="@color/material_blue_grey_800"
-            android:padding="8dp" >
+            android:background="@color/light_black">
 
             <ImageView
                 android:id="@+id/avatar"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:src="@drawable/ic_playlist_add_black_24dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/logo_white"
                 android:layout_marginTop="15dp" />
 
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Mon profil"
-                android:id="@+id/profileButton" />
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Mes playlists"
-                android:layout_alignLeft="@+id/profileButton"
-                android:layout_below="@+id/profileButton"
-                android:id="@+id/playlistsButton" />
-
         </RelativeLayout>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Mon profil"
+            android:id="@+id/profileButton"
+            android:layout_below="@id/profileBox"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Mes playlists"
+            android:layout_below="@+id/profileButton"
+            android:id="@+id/playlistsButton" />
 
         <!-- List of Actions (pages) -->
         <ListView
@@ -116,6 +97,19 @@
             android:layout_below="@+id/profileBox"
             android:choiceMode="singleChoice"
             android:background="#ffffffff" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/navList"
+            android:id="@+id/position"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="Se déconnecter"
+            android:layout_above="@+id/position"
+            android:drawableLeft="@drawable/ic_power_settings_new_black_24dp"
+            android:id="@+id/logout" />
 
     </RelativeLayout>
 

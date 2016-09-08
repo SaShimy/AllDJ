@@ -51,21 +51,14 @@ public class Home extends AppCompatActivity {
     public static final String KEY_TYPES = "types";
 
     @Override
+    public void onBackPressed() {
+    }
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        final Toolbar mToolbar = (Toolbar) findViewById(R.id.tool_bar);
-        setSupportActionBar(mToolbar);
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        mToolbar.setNavigationIcon(R.drawable.hamburger_icon);
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DrawerLayout mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
-                mDrawerLayout.openDrawer(Gravity.LEFT);
-            }
-        });
+        prepareToolbar();
+        prepareMenu();
         final String userToken = getIntent().getExtras().getString("userToken");
         final String userName = getIntent().getExtras().getString("userName");
         Log.v(TAG, userName);
@@ -112,6 +105,30 @@ public class Home extends AppCompatActivity {
             }
         });
         Log.v(TAG, userToken);
+    }
+    private void prepareToolbar() {
+        final Toolbar mToolbar = (Toolbar) findViewById(R.id.tool_bar);
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        mToolbar.setNavigationIcon(R.drawable.ic_action_name);
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DrawerLayout mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
+                mDrawerLayout.openDrawer(Gravity.LEFT);
+            }
+        });
+    }
+    private void prepareMenu() {
+        ListView list = (ListView) findViewById(R.id.navList);
+        ArrayList<String> menu = new ArrayList<>();
+        menu.add("Profil");
+        menu.add("Playlist");
+        menu.add("Types");
+        menu.add("Favoris");
+        ArrayAdapter<String> stringAdapter = new ArrayAdapter<String>(Home.this , android.R.layout.simple_list_item_1, menu);
+        list.setAdapter(stringAdapter);
     }
     private void createAlert(final String userToken, final ProgressBar spinner, final ListView Rooms, final String userName, final ArrayList<String> types) {
         AlertDialog.Builder builder = new AlertDialog.Builder(Home.this);
