@@ -284,7 +284,9 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
                         search = search.replaceAll(" ", "+");
                         String urlcall_search = url +  "q=" + search + "&key=" + API_KEY;
 
-                        final JsonObjectRequest jsonRequest = new JsonObjectRequest(urlcall_search, null,
+                        searchRequest(urlcall_search, list_search,listView, userToken, queue, ad);
+
+                        /*final JsonObjectRequest jsonRequest = new JsonObjectRequest(urlcall_search, null,
                                 new Response.Listener<JSONObject>() {
                                     @Override
                                     public void onResponse(final JSONObject response) {
@@ -321,14 +323,15 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
                                                         final JSONObject tmp = arr.getJSONObject(i - 1);
 
                                                         if (is_inqueue == false) {
-                                                            StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://apifreshdj.cloudapp.net/room/api/" + ROOMID + "/waiting_list/join",
+                                                            joinMusicQueue(userToken, queue, tmp, duration);*/
+                                                            /*StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://apifreshdj.cloudapp.net/room/api/" + ROOMID + "/waiting_list/join",
                                                                     new Response.Listener<String>() {
                                                                         @Override
                                                                         public void onResponse(String response) {
                                                                             Log.v("ok", "queue joined");
                                                                             JoinQueue.setText("Changer la musique");
                                                                             //YouTubePlayerView youTubePlayerView = (YouTubePlayerView) findViewById(R.id.youtube_player);
-                                                                            playvideo(userToken, queue, ROOMID/*, youTubePlayerView*/);
+                                                                            playvideo(userToken, queue, ROOMID);//, youTubePlayerView);
                                                                             is_inqueue = true;
                                                                         }
                                                                     },
@@ -344,6 +347,7 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
                                                                     Map<String, String> params = new HashMap<>();
                                                                     try {
                                                                         params.put("musicId", tmp.getJSONObject("id").getString("videoId"));
+                                                                        params.put("duration", duration);
                                                                     } catch (JSONException e) {
                                                                         e.printStackTrace();
                                                                     }
@@ -357,16 +361,17 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
                                                                     return header;
                                                                 }
                                                             };
-                                                            queue.add(stringRequest);
-                                                        }
+                                                            queue.add(stringRequest);*/
+                                                        /*}
                                                         else if(is_inqueue == true) {
-                                                            StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://apifreshdj.cloudapp.net/room/api/" + ROOMID + "/waiting_list/music/update",
+                                                            changeMusic(userToken, queue, tmp, duration);*/
+                                                            /*StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://apifreshdj.cloudapp.net/room/api/" + ROOMID + "/waiting_list/music/update",
                                                                     new Response.Listener<String>() {
                                                                         @Override
                                                                         public void onResponse(String response) {
                                                                             Log.v("ok", "music changed");
                                                                             //YouTubePlayerView youTubePlayerView = (YouTubePlayerView) findViewById(R.id.youtube_player);
-                                                                            playvideo(userToken, queue, ROOMID/*, youTubePlayerView*/);
+                                                                            playvideo(userToken, queue, ROOMID);//, youTubePlayerView);
                                                                         }
                                                                     },
                                                                     new Response.ErrorListener() {
@@ -394,8 +399,8 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
                                                                     return header;
                                                                 }
                                                             };
-                                                            queue.add(stringRequest);
-                                                        }
+                                                            queue.add(stringRequest);*/
+                                                        /*}
                                                         }catch(JSONException e){
                                                             e.printStackTrace();
                                                         }
@@ -413,10 +418,154 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
                             public void onErrorResponse(VolleyError error) {
                             }
                         });
-                        queue.add(jsonRequest);
+                        queue.add(jsonRequest);*/
                     }
                 }
         );
+    }
+
+    public void searchRequest(final String urlcall_search, final ArrayList<Video> list_search, final ListView listView,final String userToken, final RequestQueue queue, final AlertDialog ad) {
+        final JsonObjectRequest jsonRequest = new JsonObjectRequest(urlcall_search, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(final JSONObject response) {
+                        try {
+                            final JSONArray arr = response.getJSONArray("items");
+                            for (int i = 0; i < arr.length(); i++) {
+                                JSONObject tmp = arr.getJSONObject(i);
+                                JSONObject objectId = tmp.getJSONObject("id");
+                                JSONObject objectSnippet = tmp.getJSONObject("snippet");
+                                String thumbnailurl = objectSnippet.getJSONObject("thumbnails").getJSONObject("default").getString("url");
+                                if (objectId.has("videoId")) {
+                                    list_search.add(new Video(objectSnippet.getString("title"), objectId.getString("videoId"), objectSnippet.getString("channelTitle"), thumbnailurl));
+                                }
+                            }
+                            videoAdapter adapter = new videoAdapter(Room.this, list_search);
+                            listView.setAdapter(adapter);
+                            listView.invalidateViews();
+                            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+                                @Override
+                                public void onItemClick(AdapterView<?> parent, View view,
+                                                        int position, long id) {
+
+                                    try {
+                                        Log.v("position", String.valueOf(position));
+                                        int i = 0, y = 0;
+                                        for (; y <= position; i++) {
+                                            JSONObject tmp = arr.getJSONObject(i);
+                                            JSONObject objectId = tmp.getJSONObject("id");
+                                            if (objectId.has("videoId")) {
+                                                y++;
+                                            }
+                                        }
+                                        final JSONObject tmp = arr.getJSONObject(i - 1);
+
+                                        if (is_inqueue == false) {
+                                            joinMusicQueue(userToken, queue, tmp, "ok");//duration);
+
+                                        }
+                                        else if(is_inqueue == true) {
+                                            changeMusic(userToken, queue, tmp, "ok");//duration);
+                                        }
+                                    }catch(JSONException e){
+                                        e.printStackTrace();
+                                    }
+
+                                    ad.dismiss();
+                                }
+
+                            });
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+            }
+        });
+        queue.add(jsonRequest);
+    }
+
+    public void joinMusicQueue(final String userToken, final RequestQueue queue, final JSONObject tmp, final String duration) {
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://apifreshdj.cloudapp.net/room/api/" + ROOMID + "/waiting_list/join",
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.v("ok", "queue joined");
+                        JoinQueue.setText("Changer la musique");
+                        //YouTubePlayerView youTubePlayerView = (YouTubePlayerView) findViewById(R.id.youtube_player);
+                        playvideo(userToken, queue, ROOMID);//, youTubePlayerView);
+                        is_inqueue = true;
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(Room.this, error.toString(), Toast.LENGTH_LONG).show();
+                        Log.v("ERR", error.toString());
+                    }
+                }) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                try {
+                    params.put("musicId", tmp.getJSONObject("id").getString("videoId"));
+                    params.put("duration", duration);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                Log.v("PAR", params.toString());
+                return params;
+            }
+
+            public Map<String, String> getHeaders() {
+                Map<String, String> header = new HashMap<String, String>();
+                header.put("Authorization", "Bearer " + userToken);
+                return header;
+            }
+        };
+        queue.add(stringRequest);
+    }
+
+    public void changeMusic(final String userToken, final RequestQueue queue, final JSONObject tmp, final String duration){
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://apifreshdj.cloudapp.net/room/api/" + ROOMID + "/waiting_list/music/update",
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.v("ok", "music changed");
+                        //YouTubePlayerView youTubePlayerView = (YouTubePlayerView) findViewById(R.id.youtube_player);
+                        playvideo(userToken, queue, ROOMID/*, youTubePlayerView*/);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(Room.this, error.toString(), Toast.LENGTH_LONG).show();
+                        Log.v("ERR", error.toString());
+                    }
+                }) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                try {
+                    params.put("musicId", tmp.getJSONObject("id").getString("videoId"));
+                    params.put("duration", duration);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                Log.v("PAR", params.toString());
+                return params;
+            }
+
+            public Map<String, String> getHeaders() {
+                Map<String, String> header = new HashMap<String, String>();
+                header.put("Authorization", "Bearer " + userToken);
+                return header;
+            }
+        };
+        queue.add(stringRequest);
     }
 
     @Override
