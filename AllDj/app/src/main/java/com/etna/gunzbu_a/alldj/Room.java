@@ -64,7 +64,8 @@ import java.util.Set;
  */
 public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitializedListener {
 
-    private ListActivity toto;
+    private static YouTubePlayer player;
+    private static Boolean is_initialized = false;
 
     private Pubnub mPubNub;
     private Button mChannelView;
@@ -93,8 +94,6 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_room);
-
-        toto = new ListActivity();
 
         mSharedPrefs = getSharedPreferences(ChatConstants.CHAT_PREFS, MODE_PRIVATE);
 
@@ -141,7 +140,9 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
         ROOMID = id;
         Log.v("roomid", id);
         final RequestQueue queue = Volley.newRequestQueue(Room.this);
-        YouTubePlayerView youTubePlayerView = (YouTubePlayerView) findViewById(R.id.youtube_player);
+
+        /*YouTubePlayerView youTubePlayerView = (YouTubePlayerView) findViewById(R.id.youtube_player);
+        youTubePlayerView.initialize(API_KEY, Room.this);*/
 
         this.JoinQueue.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -153,7 +154,7 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
         });
 
         initPubNub();
-        playvideo(userToken, queue, id, youTubePlayerView);
+        playvideo(userToken, queue, id/*, youTubePlayerView*/);
     }
 
 
@@ -188,7 +189,7 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
         leavequeue();
         super.onBackPressed();
     }
-    public void playvideo(final String userToken, final RequestQueue queue, final String RoomId, final YouTubePlayerView youTubePlayerView) {
+    public void playvideo(final String userToken, final RequestQueue queue, final String RoomId/*, final YouTubePlayerView youTubePlayerView*/) {
         final JsonObjectRequest jsonRequest = new JsonObjectRequest("http://apifreshdj.cloudapp.net/room/api/" + RoomId + "/music", null,
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -211,7 +212,19 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
-                            youTubePlayerView.initialize(API_KEY, Room.this);
+                            if(is_initialized == false) {
+                                Log.v("initialize", "yes");
+                                YouTubePlayerView youTubePlayerView = (YouTubePlayerView) findViewById(R.id.youtube_player);
+                                youTubePlayerView.initialize(API_KEY, Room.this);
+                                is_initialized  = true;
+                            }
+                            else {
+                                player.loadVideo(VIDEOID, TIME_VID);
+                            }
+                            Log.v("videoid", VIDEOID);
+                            Log.v("Time", String.valueOf(TIME_VID));
+
+                            //youTubePlayerView.initialize(API_KEY, Room.this);
                         }
                         Log.v("playvideo", "non");
                     }
@@ -312,8 +325,8 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
                                                                         public void onResponse(String response) {
                                                                             Log.v("ok", "queue joined");
                                                                             JoinQueue.setText("Changer la musique");
-                                                                            YouTubePlayerView youTubePlayerView = (YouTubePlayerView) findViewById(R.id.youtube_player);
-                                                                            playvideo(userToken, queue, ROOMID, youTubePlayerView);
+                                                                            //YouTubePlayerView youTubePlayerView = (YouTubePlayerView) findViewById(R.id.youtube_player);
+                                                                            playvideo(userToken, queue, ROOMID/*, youTubePlayerView*/);
                                                                             is_inqueue = true;
                                                                         }
                                                                     },
@@ -350,8 +363,8 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
                                                                         @Override
                                                                         public void onResponse(String response) {
                                                                             Log.v("ok", "music changed");
-                                                                            YouTubePlayerView youTubePlayerView = (YouTubePlayerView) findViewById(R.id.youtube_player);
-                                                                            playvideo(userToken, queue, ROOMID, youTubePlayerView);
+                                                                            //YouTubePlayerView youTubePlayerView = (YouTubePlayerView) findViewById(R.id.youtube_player);
+                                                                            playvideo(userToken, queue, ROOMID/*, youTubePlayerView*/);
                                                                         }
                                                                     },
                                                                     new Response.ErrorListener() {
@@ -997,13 +1010,15 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
     @Override
     public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer player, boolean wasRestored) {
         /** add listeners to YouTubePlayer instance **/
+        this.player = player;
         player.setPlayerStateChangeListener(playerStateChangeListener);
         player.setPlaybackEventListener(playbackEventListener);
 
         /** Start buffering **/
         if (!wasRestored) {
             //set video to a playlist but dont play it automatically
-            //player.cueVideo(VIDEOID);
+            /*this.player.cueVideo(VIDEOID);
+            this.player.play();*/
             // play automatically the video
             //player.loadVideo(VIDEOID);
 
@@ -1092,8 +1107,8 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
             }
             TIME_VID = 0;
             is_master = false;
-            YouTubePlayerView youTubePlayerView = (YouTubePlayerView) findViewById(R.id.youtube_player);
-            playvideo(USERTOKEN, queue, ROOMID, youTubePlayerView);
+            //YouTubePlayerView youTubePlayerView = (YouTubePlayerView) findViewById(R.id.youtube_player);
+            playvideo(USERTOKEN, queue, ROOMID/*, youTubePlayerView*/);
         }
 
         @Override
