@@ -61,12 +61,19 @@ public class Home extends AppCompatActivity {
         prepareMenu();
         final String userToken = getIntent().getExtras().getString("userToken");
         final String userName = getIntent().getExtras().getString("userName");
-        Log.v(TAG, userName);
         final ProgressBar spinner = (ProgressBar)findViewById(R.id.progressBar);
+        final Button disconnectButton = (Button) findViewById(R.id.logout);
+        disconnectButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                disconnectUser();
+            }
+        });
         assert spinner != null;
         spinner.setVisibility(View.VISIBLE);
         final ListView Rooms = (ListView) findViewById(R.id.roomList);
         createList(spinner, Rooms, userName, userToken);
+
         FloatingActionButton createRoom = (FloatingActionButton) findViewById(R.id.createRoom);
         assert createRoom != null;
         createRoom.setOnClickListener(new View.OnClickListener() {
@@ -215,17 +222,30 @@ public class Home extends AppCompatActivity {
                     @Override
                     public void onResponse(final JSONArray response) {
                         spinner.setVisibility(View.GONE);
-                        final String[] rooms = new String[response.length()];
+                        final ArrayList<Video> rooms = new ArrayList<>();
                         for (int i = 0; i < response.length(); i++){
                             try {
-                                rooms[i] = response.getJSONObject(i).getString("name");
+                                String thumbnailurl = new String();
+                                Log.v(TAG, response.getJSONObject(i).getString("musicYtId"));
+                                if (response.getJSONObject(i).getString("musicYtId") == "null") {
+                                    thumbnailurl = "http://www.2ememain.be/css/3148/images/pas-de-photo.png";
+                                }
+                                else {
+                                    thumbnailurl = "http://img.youtube.com/vi/" + response.getJSONObject(i).getString("musicYtId") + "/maxresdefault.jpg";
+                                }
+
+                                rooms.add(new Video(response.getJSONObject(i).getString("name"), "", "", thumbnailurl));
+                                videoAdapter adapter = new videoAdapter(Home.this, rooms);
+                                Rooms.setAdapter(adapter);
+                                Rooms.invalidateViews();
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
                         }
-                        ArrayAdapter<String> myAdapter = new ArrayAdapter<String>(Home.this , android.R.layout.simple_list_item_1, rooms);
+
+                        /*ArrayAdapter<String> myAdapter = new ArrayAdapter<String>(Home.this , android.R.layout.simple_list_item_1, rooms);
                         assert Rooms != null;
-                        Rooms.setAdapter(myAdapter);
+                        Rooms.setAdapter(myAdapter);*/
                         Rooms.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                             @Override
                             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -273,5 +293,9 @@ public class Home extends AppCompatActivity {
             }
         });
         queue.add(jsonRequest);
+    }
+    private void disconnectUser() {
+        Intent Login = new Intent(Home.this, Login.class);
+        startActivity(Login);
     }
 }

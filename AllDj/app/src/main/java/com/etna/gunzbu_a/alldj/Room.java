@@ -188,7 +188,9 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
     @Override
     public void onBackPressed() {
         Log.v("back", "ok");
-        leavequeue();
+        if (is_inqueue) {
+            leavequeue();
+        }
         super.onBackPressed();
     }
     public void playvideo(final String userToken, final RequestQueue queue, final String RoomId/*, final YouTubePlayerView youTubePlayerView*/) {

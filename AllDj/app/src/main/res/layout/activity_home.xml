@@ -29,7 +29,8 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/swipeContainer"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:layout_below="@+id/tool_bar">
 
     <ListView
         android:layout_width="wrap_content"
@@ -39,15 +40,16 @@
         android:layout_below="@+id/tool_bar"
         android:layout_alignParentBottom="true" />
 
-    <android.support.design.widget.FloatingActionButton
-        android:src="@drawable/ic_playlist_add_black_24dp"
-        app:fabSize="normal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/createRoom"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginBottom="47dp" />
+    </android.support.v4.widget.SwipeRefreshLayout>
+        <android.support.design.widget.FloatingActionButton
+            android:src="@drawable/ic_playlist_add_black_24dp"
+            app:fabSize="normal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/createRoom"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginBottom="47dp" />
 
 </RelativeLayout>
 
