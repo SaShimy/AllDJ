@@ -66,7 +66,7 @@ import java.util.Set;
 public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitializedListener {
 
     private static YouTubePlayer player;
-    private static Boolean is_initialized = false;
+    private static Boolean is_initialized;
 
     private Pubnub mPubNub;
     private Button mChannelView;
@@ -95,6 +95,8 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_room);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+        is_initialized = false;
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
         mSharedPrefs = getSharedPreferences(ChatConstants.CHAT_PREFS, MODE_PRIVATE);
@@ -496,7 +498,7 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
                     @Override
                     public void onResponse(String response) {
                         Log.v("ok", "queue joined");
-                        JoinQueue.setText("Changer la musique");
+                        JoinQueue.setText("Changer\n la musique");
                         //YouTubePlayerView youTubePlayerView = (YouTubePlayerView) findViewById(R.id.youtube_player);
                         playvideo(userToken, queue, ROOMID);//, youTubePlayerView);
                         is_inqueue = true;
@@ -645,6 +647,9 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
      */
     @Override
     protected void onDestroy() {
+            if (player != null) {
+                player.release();
+            }
         super.onDestroy();
     }
 

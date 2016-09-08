@@ -10,66 +10,81 @@
         android:layout_height="wrap_content"
         android:background="#fff"
         android:padding="0dp" />
-
-    <Button
-        android:id="@+id/channel_bar"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        style="@style/AppTheme.ChannelBar"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Channel"
-        android:onClick="changeChannel"
-        android:layout_centerVertical="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/youtube_player"
+        android:fillViewport="true"
+        android:id="@+id/sv">
 
-    <ListView
-        android:id="@+id/listnulle"
-        android:layout_height="match_parent"
-        android:layout_width="match_parent"
-        android:layout_below="@id/channel_bar"
-        android:transcriptMode="alwaysScroll"
-        android:layout_above="@+id/msg_box"/>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="3dp"
-        android:layout_above="@+id/msg_box"
-        android:background="@drawable/light_fade_up"/>
-
-    <LinearLayout
-        android:id="@+id/msg_box"
-        style="@style/AppTheme.MessageBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true">
-
-        <EditText
-            android:id="@+id/message_et"
-            android:hint="@string/send_message"
-            android:layout_width="0dp"
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
-            android:layout_marginLeft ="5dp"
-            android:layout_marginEnd  ="5dp"
-            android:layout_marginRight="5dp"
-            android:layout_weight="4"/>
+            android:id="@+id/rl">
+        <Button
+            android:id="@+id/channel_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/AppTheme.ChannelBar"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Channel"
+            android:onClick="changeChannel"
+            android:layout_below="@+id/JoinQueuebtn"
+            android:layout_alignParentStart="true" />
+
+        <ListView
+            android:id="@+id/listnulle"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:layout_below="@id/channel_bar"
+            android:transcriptMode="alwaysScroll"
+            android:layout_above="@+id/msg_box"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:layout_above="@+id/msg_box"
+            android:background="@drawable/light_fade_up"/>
+
+        <LinearLayout
+            android:id="@+id/msg_box"
+            style="@style/AppTheme.MessageBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true">
+
+            <EditText
+                android:id="@+id/message_et"
+                android:hint="@string/send_message"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginLeft ="5dp"
+                android:layout_marginEnd  ="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_weight="4"/>
+
+            <Button
+                android:text="send"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="sendMessage"/>
+
+        </LinearLayout>
 
         <Button
-            android:text="send"
-            android:layout_width="0dp"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:onClick="sendMessage"/>
-
-    </LinearLayout>
-
-    <Button
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Rejoindre\n la file d&apos;attente"
-        android:id="@+id/JoinQueuebtn"
-        android:layout_above="@+id/channel_bar"
-        android:layout_alignParentEnd="true" />
+            android:text="Rejoindre\n la file d&apos;attente"
+            android:id="@+id/JoinQueuebtn"
+            android:layout_below="@+id/rl"
+            android:layout_alignParentEnd="true"
+            tools:ignore="NotSibling" />
+        </RelativeLayout>
+    </ScrollView>
 
 </RelativeLayout>
