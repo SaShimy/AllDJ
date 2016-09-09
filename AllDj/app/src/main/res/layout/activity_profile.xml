@@ -14,8 +14,8 @@
         android:layout_height="wrap_content"
         android:id="@+id/profilePic"
         android:src="@mipmap/ic_launcher"
-        android:minHeight="200px"
-        android:minWidth="200px"
+        android:minHeight="300px"
+        android:minWidth="300px"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
 
@@ -104,6 +104,7 @@
         android:id="@+id/textView5"
         android:layout_below="@+id/edBirthday"
         android:layout_alignStart="@+id/textView4" />
+
     <RadioGroup
         android:id="@+id/radioSex"
         android:layout_width="wrap_content"
@@ -128,7 +129,7 @@
     </RadioGroup>
 
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Mettre à jour"
         android:id="@+id/updateButton"

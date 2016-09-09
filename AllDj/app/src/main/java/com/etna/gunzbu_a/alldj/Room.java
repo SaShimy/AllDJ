@@ -196,6 +196,7 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
         }
         super.onBackPressed();
     }
+
     public void playvideo(final String userToken, final RequestQueue queue, final String RoomId/*, final YouTubePlayerView youTubePlayerView*/) {
         final JsonObjectRequest jsonRequest = new JsonObjectRequest("http://apifreshdj.cloudapp.net/room/api/" + RoomId + "/music", null,
                 new Response.Listener<JSONObject>() {
@@ -645,7 +646,6 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
     /**
      * I remove the PubNub object in onDestroy since turning the screen off triggers onStop and
      *   I wanted PubNub to receive messages while the screen is off.
-     *
      */
     @Override
     protected void onDestroy() {
@@ -883,7 +883,7 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
                     Room.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(Room.this,"RUNNIN",Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(Room.this,"RUNNIN",Toast.LENGTH_SHORT).show();
                             mChatAdapter.setMessages(chatMsgs);
                         }
                     });
@@ -1046,9 +1046,10 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
 
             if (gcmRegId.isEmpty()) {
                 registerInBackground();
-            } else {
-                Toast.makeText(this,"Registration ID already exists: " + gcmRegId,Toast.LENGTH_SHORT).show();
             }
+//            else {
+//                Toast.makeText(this,"Registration ID already exists: " + gcmRegId,Toast.LENGTH_SHORT).show();
+//            }
         } else {
             Log.e("GCM-register", "No valid Google Play Services APK found.");
         }

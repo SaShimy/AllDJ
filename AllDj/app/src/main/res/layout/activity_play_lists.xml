@@ -4,6 +4,7 @@
     android:id="@+id/drawerLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -27,39 +28,66 @@
         android:layout_width="match_parent"
         android:layout_height="366dp" />
 
-    <EditText
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/text_PlayList" />
+        android:layout_height="0dip"
+        android:layout_weight="1"
+        android:gravity="center|bottom"
+        android:orientation="vertical" >
 
-    <RadioGroup
-        android:id="@+id/radioGroup"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center|bottom"
+            android:id="@+id/text_PlayList" />
 
-        <RadioButton
-            android:id="@+id/radio_public"
+        <RadioGroup
+            android:id="@+id/radioGroup"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="public"
-            android:tag="true"
-            android:checked="true"/>
+            android:orientation="vertical">
 
-        <RadioButton
-            android:id="@+id/radio_private"
-            android:layout_width="fill_parent"
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight=".3"
+                android:layout_gravity="center">
+
+                <RadioButton
+                    android:id="@+id/radio_public"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Publique"
+                    android:tag="true"
+                    android:checked="true" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight=".3"
+                android:layout_gravity="center">
+
+                <RadioButton
+                    android:id="@+id/radio_private"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Privée"
+                    android:tag="false" />
+
+            </LinearLayout>
+
+        </RadioGroup>
+
+        <Button
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:tag="false"
-            android:text="private" />
+            android:text="Ajouter"
+            android:id="@+id/addPlayList"
+            android:background="@color/colorPrimary"
+            android:textColor="@color/white"/>
 
-    </RadioGroup>
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="add"
-        android:id="@+id/addPlayList" />
-
+    </LinearLayout>
 </LinearLayout>
 </android.support.v4.widget.DrawerLayout>
