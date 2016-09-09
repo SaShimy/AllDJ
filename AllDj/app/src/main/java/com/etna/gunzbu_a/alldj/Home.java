@@ -231,7 +231,7 @@ public class Home extends AppCompatActivity {
                                     thumbnailurl = "http://www.2ememain.be/css/3148/images/pas-de-photo.png";
                                 }
                                 else {
-                                    thumbnailurl = "http://img.youtube.com/vi/" + response.getJSONObject(i).getString("musicYtId") + "/maxresdefault.jpg";
+                                    thumbnailurl = "http://img.youtube.com/vi/" + response.getJSONObject(i).getString("musicYtId") + "/default.jpg";
                                 }
 
                                 rooms.add(new Video(response.getJSONObject(i).getString("name"), "", "", thumbnailurl));

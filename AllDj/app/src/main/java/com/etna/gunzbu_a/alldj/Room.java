@@ -80,7 +80,7 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
     private String gcmRegId;
     private String channel  = "";
 
-    public static String VIDEOID = "";
+    public static String VIDEOID;
     public static Boolean is_master = false;
     public static Integer TIME_VID = 0;
     public static String USERTOKEN = "";
@@ -98,6 +98,7 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         is_initialized = false;
         is_inqueue = false;
+        VIDEOID = "";
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
         mSharedPrefs = getSharedPreferences(ChatConstants.CHAT_PREFS, MODE_PRIVATE);
@@ -207,21 +208,21 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
                                     is_inqueue = false;
                                     JoinQueue.setText("Rejoindre \n la file d'attente");
                                 }
-                                if(response.getInt("time") < 3) {
+                                if(response.getInt("time") < 1) {
                                     TIME_VID = 0;
                                 }
                                 else {
                                     TIME_VID = response.getInt("time") * 1000;
                                 }
 
-                                if(is_initialized == false && VIDEOID == response.getString("music_id")) {
+                                if(is_initialized == false && !VIDEOID.equals(response.getString("music_id"))) {
                                     VIDEOID =response.getString("music_id");
                                     Log.v("initialize", "yes");
                                     YouTubePlayerView youTubePlayerView = (YouTubePlayerView) findViewById(R.id.youtube_player);
                                     youTubePlayerView.initialize(API_KEY, Room.this);
                                     is_initialized  = true;
                                 }
-                                else if (is_initialized == true && VIDEOID == response.getString("music_id")){
+                                else if (is_initialized == true && !VIDEOID.equals(response.getString("music_id"))){
                                     VIDEOID =response.getString("music_id");
                                     player.setPlayerStyle(YouTubePlayer.PlayerStyle.CHROMELESS);
                                     player.loadVideo(VIDEOID, TIME_VID);
@@ -867,40 +868,6 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
      * @param view
      */
     public void changeChannel(View view){
-        LayoutInflater li = LayoutInflater.from(this);
-        View promptsView = li.inflate(R.layout.channel_change, null);
-
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-        alertDialogBuilder.setView(promptsView);
-
-        final EditText userInput = (EditText) promptsView.findViewById(R.id.editTextDialogUserInput);
-        userInput.setText(this.channel);                       // Set text to current ID
-        userInput.setSelection(userInput.getText().length());  // Move cursor to end
-
-        alertDialogBuilder
-                .setCancelable(false)
-                .setPositiveButton("OK",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                String newChannel = userInput.getText().toString();
-                                if (newChannel.equals("")) return;
-
-                                mPubNub.unsubscribe(channel);
-                                mChatAdapter.clearMessages();
-                                channel = newChannel;
-                                mChannelView.setText(channel);
-                                subscribeWithPresence();
-                                history();
-                            }
-                        })
-                .setNegativeButton("Cancel",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.cancel();
-                            }
-                        });
-        AlertDialog alertDialog = alertDialogBuilder.create();
-        alertDialog.show();
     }
 
     /**
@@ -1115,32 +1082,6 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
         @Override
         public void onVideoEnded() {
             RequestQueue queue = Volley.newRequestQueue(Room.this);
-            if(is_master == true) {
-                //requete
-
-                StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://apifreshdj.cloudapp.net/room/api/"+ ROOMID+"/music/update",
-                        new Response.Listener<String>() {
-                            @Override
-                            public void onResponse(String response) {
-                                Log.v("supp", "ok");
-                            }
-                        },
-                        new Response.ErrorListener() {
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
-                                Toast.makeText(Room.this, error.toString(), Toast.LENGTH_LONG).show();
-                                Log.v("ERR", error.toString());
-                            }
-                        }) {
-                    public Map<String, String> getHeaders() {
-                        Map<String, String> header = new HashMap<String, String>();
-                        header.put("Authorization", "Bearer " + USERTOKEN);
-                        return header;
-                    }
-                };
-                queue.add(stringRequest);
-
-            }
             TIME_VID = 0;
             is_master = false;
             //YouTubePlayerView youTubePlayerView = (YouTubePlayerView) findViewById(R.id.youtube_player);
