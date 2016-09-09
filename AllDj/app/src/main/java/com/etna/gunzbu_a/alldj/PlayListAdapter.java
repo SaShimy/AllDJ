@@ -22,12 +22,14 @@ public class PlayListAdapter extends ArrayAdapter<PlayList> {
     public View getView(int position, View convertView, ViewGroup parent) {
 
         if(convertView == null){
+            // On sélectionne le layout show_playlists qui représentera chaque cellule de la listview
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.show_playlists,parent, false);
         }
 
         ViewHolder viewHolder = (ViewHolder) convertView.getTag();
         if(viewHolder == null){
             viewHolder = new ViewHolder();
+            // On récupère les deux textviews dans nos variables
             viewHolder.title = (TextView) convertView.findViewById(R.id.title);
             viewHolder.isPublic = (TextView) convertView.findViewById(R.id.txt_isPublic);
             convertView.setTag(viewHolder);
@@ -38,8 +40,11 @@ public class PlayListAdapter extends ArrayAdapter<PlayList> {
 
         //il ne reste plus qu'à remplir notre vue
         viewHolder.title.setText(playlists.getName());
+
+        // On vérifie la valeur ispublic si elle est à true on affiche publique
         if(playlists.getIspublic() == "true")
             viewHolder.isPublic.setText("Publique");
+        // On vérifie la valeur ispublic si elle est à true on affiche privée
         else if (playlists.getIspublic() == "false")
             viewHolder.isPublic.setText("Privée");
         else

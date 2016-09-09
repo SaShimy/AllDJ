@@ -96,10 +96,12 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_room);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+
+        // On initialise ces valeurs pour des conditions plus tard
         is_initialized = false;
         is_inqueue = false;
-
         VIDEOID = "";
+
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
         mSharedPrefs = getSharedPreferences(ChatConstants.CHAT_PREFS, MODE_PRIVATE);
@@ -107,7 +109,6 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
         Intent i = getIntent();
 
         String name = i.getExtras().getString("name");
-        Log.v("name", name);
         channel = name;
 
         username = i.getExtras().getString("username");
@@ -139,17 +140,20 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
         this.mMessageET = (EditText) findViewById(R.id.message_et);
         this.mChannelView = (Button) findViewById(R.id.channel_bar);
         this.mChannelView.setText(this.channel);
+
         this.JoinQueue = (Button) findViewById(R.id.JoinQueuebtn);
         final String userToken = getIntent().getExtras().getString("userToken");
-        USERTOKEN = userToken;
         final String id = getIntent().getExtras().getString("id");
+        USERTOKEN = userToken;
         ROOMID = id;
-        Log.v("roomid", id);
+
         final RequestQueue queue = Volley.newRequestQueue(Room.this);
 
         this.JoinQueue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Si master est égal à true cela veut dire que ça vidéo est entrain d'être joué
+                // Donc on lui permet pas de rejoindre la file d'attente
                 if(is_master == false) {
                     joinqueue(userToken, queue);
                 }
@@ -157,11 +161,13 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
         });
 
         initPubNub();
+
+        // Lecture de la vidéo
         playvideo(userToken, queue, id);
     }
 
 
-
+    // Requête pour quitter la file d'attente
     public void leavequeue() {
         final RequestQueue queue = Volley.newRequestQueue(Room.this);
         StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://apifreshdj.cloudapp.net/room/api/"+ ROOMID +"/waiting_list/leave",
@@ -186,39 +192,51 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
         };
         queue.add(stringRequest);
     }
+
+    // On override la fonction quand on appuie sur retour
     @Override
     public void onBackPressed() {
-        Log.v("back", "ok");
         if (is_inqueue) {
             leavequeue();
         }
         super.onBackPressed();
     }
 
+    // Lecture de la vidéo
     public void playvideo(final String userToken, final RequestQueue queue, final String RoomId) {
 
+        // début de la requête
         final JsonObjectRequest jsonRequest = new JsonObjectRequest("http://apifreshdj.cloudapp.net/room/api/" + RoomId + "/music", null,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(final JSONObject response) {
+                        // Si respone ne contient pas l'élément message alors il y a une vidéo en cours
                         if(!response.has("message")){
                             try {
+                                // On modifie le texte d'un élément du layout avec le nom de la vidéo
                                 mChannelView.setText(channel + "\n" + response.getString("name"));
+                                // On regarde si l'utilisateur est actuellement le master
+                                // C'est à dire si la vidéo en cours est la sienne
                                 is_master = response.getBoolean("is_master");
                                 if(is_master == true) {
+                                    // S'il est master on dit qu'il n'est pas dans la file d'attente
+                                    // On change le texte du bouton pour dire qu'il est le DJ
                                     is_inqueue = false;
                                     JoinQueue.setText("Vous êtes le DJ !");
                                 }
+                                // Si on reçoit un temps de vidéo inférieur à 1 on met le temps de la vidéo à 0s
                                 if(response.getInt("time") < 1) {
                                     TIME_VID = 0;
                                 }
                                 else {
+                                    // Le temps reçu est en seconde et on a besoin de le convertir en milliseconde
                                     TIME_VID = response.getInt("time") * 1000;
                                 }
 
+                                // Si le player n'est pas initialisé et que la variable VIDEOID n'est pas la même que celle qu'on reçoit
+                                // Alors on va initialisé le player et mettre la nouvelle vidéo
                                 if(is_initialized == false && !VIDEOID.equals(response.getString("music_id"))) {
                                     VIDEOID =response.getString("music_id");
-                                    Log.v("initialize", "yes");
                                     YouTubePlayerView youTubePlayerView = (YouTubePlayerView) findViewById(R.id.youtube_player);
                                     youTubePlayerView.initialize(API_KEY, Room.this);
                                     is_initialized  = true;
@@ -249,16 +267,20 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
         queue.add(jsonRequest);
     }
 
+    // fonction pour rejoindre la queue on lance la fonction pour créer l'alerte dans laquelle on gèrera tous les
+    // éléments pour faire la requête finale
     public void joinqueue(final String userToken, final RequestQueue queue) {
         createAlert(userToken, queue);
     }
 
+    // fonction pour créer les élements de l'alerte et l'afficher
     public void createAlert(final String userToken, final RequestQueue queue) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(Room.this);
         builder.setTitle("Choix de la musique");
 
         // Set up the input
         Context context = Room.this;
+
         final LinearLayout layout = new LinearLayout(context);
         layout.setOrientation(LinearLayout.VERTICAL);
 
@@ -273,6 +295,8 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
         layout.addView(listV);
         builder.setView(layout);
         final AlertDialog ad = builder.show();
+
+        //Fonction qui contient le onclickevent de searchbtn dans l'alerte et qui fera la requête pour afficher les vidéos de YT
         set_searchbtn(button, queue, userToken, edName, listV, ad);
 
     }
@@ -289,7 +313,7 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
                         search = searchText.getText().toString();
                         search = search.replaceAll(" ", "+");
                         String urlcall_search = url +  "q=" + search + "&key=" + API_KEY;
-
+                        // Requête pour la recherche de vidéos sur YT
                         searchRequest(urlcall_search,listView, userToken, queue, ad);
 
                     }
@@ -297,6 +321,7 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
         );
     }
 
+    // Fonction avec la requête de recherche de videos sur YT
     public void searchRequest(final String urlcall_search, final ListView listView,final String userToken, final RequestQueue queue, final AlertDialog ad) {
         final JsonObjectRequest jsonRequest = new JsonObjectRequest(urlcall_search, null,
                 new Response.Listener<JSONObject>() {
@@ -305,6 +330,7 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
                         final String API_KEY = "AIzaSyCqiRYh13_-Fjy6qCMO9zRP1reaG4S2K6w";
                         final ArrayList<Video> list_search = new ArrayList<Video>();
                         try {
+                            // On récupère la réponse on parse et on rempli notre list avec les informations récupérées
                             final JSONArray arr = response.getJSONArray("items");
                             for (int i = 0; i < arr.length(); i++) {
                                 JSONObject tmp = arr.getJSONObject(i);
@@ -315,56 +341,12 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
                                     list_search.add(new Video(objectSnippet.getString("title"), objectId.getString("videoId"), objectSnippet.getString("channelTitle"), thumbnailurl));
                                 }
                             }
+                            // On utilise l'adapter avec notre liste et on l'implémente à notre listview
                             videoAdapter adapter = new videoAdapter(Room.this, list_search);
                             listView.setAdapter(adapter);
                             listView.invalidateViews();
-                            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
-                                @Override
-                                public void onItemClick(AdapterView<?> parent, View view,
-                                                        int position, long id) {
-
-                                    try {
-                                        Log.v("position", String.valueOf(position));
-                                        int i = 0, y = 0;
-                                        for (; y <= position; i++) {
-                                            JSONObject tmp = arr.getJSONObject(i);
-                                            JSONObject objectId = tmp.getJSONObject("id");
-                                            if (objectId.has("videoId")) {
-                                                y++;
-                                            }
-                                        }
-                                        final JSONObject tmp = arr.getJSONObject(i - 1);
-
-                                        String urlgetTD = "https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id="+tmp.getJSONObject("id").getString("videoId")+"&key="+API_KEY;
-                                        Log.v("urlget", urlgetTD);
-                                        final JsonObjectRequest jsonRequest = new JsonObjectRequest(urlgetTD, null,
-                                                new Response.Listener<JSONObject>() {
-                                                    @Override
-                                                    public void onResponse(final JSONObject response) {
-                                                        try {
-                                                            if (is_inqueue == false)
-                                                                joinMusicQueue(userToken, queue, tmp, response.getJSONArray("items").getJSONObject(0).getJSONObject("contentDetails").getString("duration"));
-                                                            else if(is_inqueue == true)
-                                                                changeMusic(userToken, queue, tmp, response.getJSONArray("items").getJSONObject(0).getJSONObject("contentDetails").getString("duration"));
-                                                        } catch (JSONException e) {
-                                                            e.printStackTrace();
-                                                        }
-                                                    }
-                                                }, new Response.ErrorListener() {
-                                            @Override
-                                            public void onErrorResponse(VolleyError error) {
-                                                Log.v("requestError", String.valueOf(error));
-                                            }
-                                        });
-                                        queue.add(jsonRequest);
-                                    }catch(JSONException e){
-                                        e.printStackTrace();
-                                    }
-
-                                    ad.dismiss();
-                                }
-                            });
+                            listviewonclick(arr, listView, userToken, queue, ad);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -377,13 +359,69 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
         queue.add(jsonRequest);
     }
 
+    public void listviewonclick(final JSONArray arr, ListView listView, final String userToken, final RequestQueue queue, final AlertDialog ad) {
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+                try {
+                    int i = 0, y = 0;
+                    for (; y <= position; i++) {
+                        JSONObject tmp = arr.getJSONObject(i);
+                        JSONObject objectId = tmp.getJSONObject("id");
+                        if (objectId.has("videoId")) {
+                            y++;
+                        }
+                    }
+                    final JSONObject tmp = arr.getJSONObject(i - 1);
+
+                    // Requête pour récupérer le temps de la vidéo
+                    String urlgetTD = "https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id="+tmp.getJSONObject("id").getString("videoId")+"&key="+API_KEY;
+                    Log.v("urlget", urlgetTD);
+                    final JsonObjectRequest jsonRequest = new JsonObjectRequest(urlgetTD, null,
+                            new Response.Listener<JSONObject>() {
+                                @Override
+                                public void onResponse(final JSONObject response) {
+                                    try {
+                                        // Si on n'est pas dans la file d'attente on appelle la fonction
+                                        // joinMusicQueue pour rejoindre la file d'attente avec toutes les
+                                        // informations qu'on a récupéré (musique, id de la room, durée de la vidéo)
+                                        if (is_inqueue == false)
+                                            joinMusicQueue(userToken, queue, tmp, response.getJSONArray("items").getJSONObject(0).getJSONObject("contentDetails").getString("duration"));
+                                            // Si on est déjà dans la file d'attente on appelle une autre requête pour
+                                            // modifier la vidéo qu'on veut partager pour conserver la position dans la file
+                                            // d'attente
+                                        else if(is_inqueue == true)
+                                            changeMusic(userToken, queue, tmp, response.getJSONArray("items").getJSONObject(0).getJSONObject("contentDetails").getString("duration"));
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Log.v("requestError", String.valueOf(error));
+                        }
+                    });
+                    queue.add(jsonRequest);
+                }catch(JSONException e){
+                    e.printStackTrace();
+                }
+
+                ad.dismiss();
+            }
+        });
+    }
+
+    // requete pour rejoindre la file d'attente avec une vidéo
     public void joinMusicQueue(final String userToken, final RequestQueue queue, final JSONObject tmp, final String duration) {
         StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://apifreshdj.cloudapp.net/room/api/" + ROOMID + "/waiting_list/join",
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Log.v("ok", "queue joined");
                         JoinQueue.setText("Changer la musique");
+                        // On lance la fonction lire la vidéo
                         playvideo(userToken, queue, ROOMID);
                         is_inqueue = true;
                     }
@@ -399,11 +437,6 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();
                 try {
-                    Log.v("musicId", tmp.getJSONObject("id").getString("videoId"));
-
-                    Log.v("duration", duration);
-
-                    Log.v("musicName", tmp.getJSONObject("snippet").getString("title"));
                     params.put("musicId", tmp.getJSONObject("id").getString("videoId"));
                     params.put("duration", duration);
                     params.put("musicName", tmp.getJSONObject("snippet").getString("title"));
@@ -423,6 +456,7 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
         queue.add(stringRequest);
     }
 
+    // requete pour changer la musique qu'on a choisi pour la liste d'attente
     public void changeMusic(final String userToken, final RequestQueue queue, final JSONObject tmp, final String duration){
         StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://apifreshdj.cloudapp.net/room/api/" + ROOMID + "/waiting_list/music/update",
                 new Response.Listener<String>() {
@@ -1023,8 +1057,10 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
 
     @Override
     public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer player, boolean wasRestored) {
-        /** add listeners to YouTubePlayer instance **/
+        // On récupère le player pour l'utiliser plus tard autre part
         this.player = player;
+
+        /** add listeners to YouTubePlayer instance **/
         player.setPlayerStateChangeListener(playerStateChangeListener);
         player.setPlaybackEventListener(playbackEventListener);
 
@@ -1037,6 +1073,8 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
             //player.loadVideo(VIDEOID);
 
             // play automatically the video at a settime in millisecond 2000ms = 2s 20000ms = 20s
+
+            // Chromeless pour que l'utilisateur ne puisse pas toucher au player
             player.setPlayerStyle(YouTubePlayer.PlayerStyle.CHROMELESS);
             player.loadVideo(VIDEOID, TIME_VID);
 
@@ -1095,12 +1133,16 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
         public void onVideoEnded() {
             RequestQueue queue = Volley.newRequestQueue(Room.this);
             if(is_master == true) {
+                // Quand la vidéo se finit et qu'on était master
+                // on change le texte du bouton car on n'est plus DJ
                 JoinQueue.setText("Rejoindre la file d'attente");
             }
 
+            // On set la vidéo à 0s et le master à false car la vidéo est terminé
             TIME_VID = 0;
             is_master = false;
-            //YouTubePlayerView youTubePlayerView = (YouTubePlayerView) findViewById(R.id.youtube_player);
+
+            // On lit la prochaine vidéo s'il y en a une
             playvideo(USERTOKEN, queue, ROOMID/*, youTubePlayerView*/);
         }
 

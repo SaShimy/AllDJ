@@ -29,7 +29,6 @@ import java.util.Map;
 public class AddVideo extends YouTubeBaseActivity implements YouTubePlayer.OnInitializedListener{
 
     public static final String API_KEY = "AIzaSyCqiRYh13_-Fjy6qCMO9zRP1reaG4S2K6w";
-    public static final String KEY_PLID = "playlistId";
     public static final String KEY_MUSICID = "musicId";
     public static final String KEY_NAME = "name";
     public static final String KEY_IMGURL = "imgUrl";
@@ -40,6 +39,7 @@ public class AddVideo extends YouTubeBaseActivity implements YouTubePlayer.OnIni
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_video);
 
+        // récupération des Intent
         final String userToken = getIntent().getExtras().getString("userToken");
         final String title = getIntent().getExtras().getString("title");
         final String channelTitle = getIntent().getExtras().getString("channelTitle");
@@ -51,11 +51,63 @@ public class AddVideo extends YouTubeBaseActivity implements YouTubePlayer.OnIni
         TextView tv_Channel = (TextView) findViewById(R.id.tV_channel);
         TextView tv_Title = (TextView) findViewById(R.id.tV_title);
 
+        // On affiche le titre de la vidéo et la chaîne
         tv_Title.setText(title);
         tv_Channel.setText("Channel : " + channelTitle);
 
         Button RequestAddBtn = (Button) findViewById(R.id.addtoplaylist);
 
+        // Requête pour ajouter la vidéo à la playlist
+        RequestToAddBtn(RequestAddBtn, title, thumbnailUrl, userToken, playlistId, playlistName);
+        /*RequestAddBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                RequestQueue queue = Volley.newRequestQueue(AddVideo.this);
+                StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://apifreshdj.cloudapp.net/playlist/api/"+playlistId+"/music/add",
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                Toast.makeText(AddVideo.this, error.toString(), Toast.LENGTH_LONG).show();
+                                Log.v("ERR", error.toString());
+                            }
+                        }) {
+                    @Override
+                    protected Map<String, String> getParams() {
+                        Map<String, String> params = new HashMap<>();
+                        params.put(KEY_NAME, title);
+                        params.put(KEY_IMGURL, thumbnailUrl);
+                        params.put(KEY_MUSICID, VIDEOID);
+                        Log.v("PAR", params.toString());
+                        return params;
+                    }
+
+                    public Map<String, String> getHeaders() {
+                        Map<String, String> header = new HashMap<String, String>();
+                        header.put("Authorization", "Bearer " + userToken);
+                        return header;
+                    }
+                };
+                queue.add(stringRequest);
+                Toast.makeText(AddVideo.this, "Musique ajoutée.", Toast.LENGTH_LONG).show();
+                Intent Activity = new Intent(AddVideo.this, PlayListsActivity.class);
+                Activity.putExtra("userToken", userToken);
+                Activity.putExtra("playlistId", playlistId);
+                Activity.putExtra("playlistName", playlistName);
+                startActivity(Activity);
+            }
+        });*/
+
+        /** Initializing YouTube player view **/
+        YouTubePlayerView youTubePlayerView = (YouTubePlayerView) findViewById(R.id.youtube_player);
+        youTubePlayerView.initialize(API_KEY, this);
+    }
+
+    public void RequestToAddBtn(Button RequestAddBtn, final String title, final String thumbnailUrl, final String userToken, final String playlistId, final String playlistName) {
         RequestAddBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -98,12 +150,7 @@ public class AddVideo extends YouTubeBaseActivity implements YouTubePlayer.OnIni
                 startActivity(Activity);
             }
         });
-
-        /** Initializing YouTube player view **/
-        YouTubePlayerView youTubePlayerView = (YouTubePlayerView) findViewById(R.id.youtube_player);
-        youTubePlayerView.initialize(API_KEY, this);
     }
-
     @Override
     public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer player, boolean wasRestored) {
         /** add listeners to YouTubePlayer instance **/

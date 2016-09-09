@@ -99,6 +99,7 @@ public class Home extends AppCompatActivity {
             public void onClick(View v) {
                 Intent Activity = new Intent(Home.this, PlayListsActivity.class);
                 Activity.putExtra("userToken", userToken);
+                Activity.putExtra("userName", userName);
                 startActivity(Activity);
             }
         });
