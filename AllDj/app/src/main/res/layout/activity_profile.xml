@@ -14,8 +14,8 @@
         android:layout_height="wrap_content"
         android:id="@+id/profilePic"
         android:src="@mipmap/ic_launcher"
-        android:minHeight="300px"
-        android:minWidth="300px"
+        android:minHeight="200px"
+        android:minWidth="200px"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
 
