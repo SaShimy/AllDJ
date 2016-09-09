@@ -98,6 +98,7 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         is_initialized = false;
         is_inqueue = false;
+
         VIDEOID = "";
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
@@ -138,7 +139,6 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
         this.mMessageET = (EditText) findViewById(R.id.message_et);
         this.mChannelView = (Button) findViewById(R.id.channel_bar);
         this.mChannelView.setText(this.channel);
-
         this.JoinQueue = (Button) findViewById(R.id.JoinQueuebtn);
         final String userToken = getIntent().getExtras().getString("userToken");
         USERTOKEN = userToken;
@@ -203,10 +203,11 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
                     public void onResponse(final JSONObject response) {
                         if(!response.has("message")){
                             try {
+                                mChannelView.setText(channel + "\n" + response.getString("name"));
                                 is_master = response.getBoolean("is_master");
                                 if(is_master == true) {
                                     is_inqueue = false;
-                                    JoinQueue.setText("Rejoindre \n la file d'attente");
+                                    JoinQueue.setText("Vous êtes le DJ !");
                                 }
                                 if(response.getInt("time") < 1) {
                                     TIME_VID = 0;
@@ -231,6 +232,8 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
                                 e.printStackTrace();
                             }
                         }
+                        else
+                            is_master = false;
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -262,6 +265,7 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
         final EditText edName = new EditText(context);
         edName.setHint("Mots clefs");
         final Button button = new Button(context);
+        button.setText("Rechercher");
         final ListView listV = new ListView(context);
 
         layout.addView(edName);
@@ -379,7 +383,7 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
                     @Override
                     public void onResponse(String response) {
                         Log.v("ok", "queue joined");
-                        JoinQueue.setText("Changer\n la musique");
+                        JoinQueue.setText("Changer la musique");
                         playvideo(userToken, queue, ROOMID);
                         is_inqueue = true;
                     }
@@ -395,8 +399,14 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();
                 try {
+                    Log.v("musicId", tmp.getJSONObject("id").getString("videoId"));
+
+                    Log.v("duration", duration);
+
+                    Log.v("musicName", tmp.getJSONObject("snippet").getString("title"));
                     params.put("musicId", tmp.getJSONObject("id").getString("videoId"));
                     params.put("duration", duration);
+                    params.put("musicName", tmp.getJSONObject("snippet").getString("title"));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -434,6 +444,7 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
                 try {
                     params.put("musicId", tmp.getJSONObject("id").getString("videoId"));
                     params.put("duration", duration);
+                    params.put("musicName", tmp.getJSONObject("snippet").getString("title"));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -896,6 +907,7 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
         }
     }
 
+    
     private void gcmUnregister() {
         new UnregisterTask().execute();
     }
@@ -1082,6 +1094,10 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
         @Override
         public void onVideoEnded() {
             RequestQueue queue = Volley.newRequestQueue(Room.this);
+            if(is_master == true) {
+                JoinQueue.setText("Rejoindre la file d'attente");
+            }
+
             TIME_VID = 0;
             is_master = false;
             //YouTubePlayerView youTubePlayerView = (YouTubePlayerView) findViewById(R.id.youtube_player);

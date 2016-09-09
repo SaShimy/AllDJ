@@ -79,7 +79,7 @@
             style="?android:attr/buttonStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Rejoindre\n la file d&apos;attente"
+            android:text="Rejoindre la file d&apos;attente"
             android:id="@+id/JoinQueuebtn"
             android:layout_below="@+id/rl"
             android:layout_alignParentEnd="true"

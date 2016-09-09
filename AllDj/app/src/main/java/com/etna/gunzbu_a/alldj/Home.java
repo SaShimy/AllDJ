@@ -233,8 +233,7 @@ public class Home extends AppCompatActivity {
                                 else {
                                     thumbnailurl = "http://img.youtube.com/vi/" + response.getJSONObject(i).getString("musicYtId") + "/default.jpg";
                                 }
-
-                                rooms.add(new Video(response.getJSONObject(i).getString("name"), "", "", thumbnailurl));
+                                rooms.add(new Video(response.getJSONObject(i).getString("name"), "", response.getJSONObject(i).getString("type"), thumbnailurl));
                                 videoAdapter adapter = new videoAdapter(Home.this, rooms);
                                 Rooms.setAdapter(adapter);
                                 Rooms.invalidateViews();

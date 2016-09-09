@@ -30,8 +30,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dip"
-        android:layout_weight="1"
+        android:layout_height="wrap_content"
         android:gravity="center|bottom"
         android:orientation="vertical" >
 
@@ -47,11 +46,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight=".3"
-                android:layout_gravity="center">
+
 
                 <RadioButton
                     android:id="@+id/radio_public"
@@ -61,13 +56,6 @@
                     android:tag="true"
                     android:checked="true" />
 
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight=".3"
-                android:layout_gravity="center">
 
                 <RadioButton
                     android:id="@+id/radio_private"
@@ -76,7 +64,7 @@
                     android:text="Privée"
                     android:tag="false" />
 
-            </LinearLayout>
+
 
         </RadioGroup>
 
