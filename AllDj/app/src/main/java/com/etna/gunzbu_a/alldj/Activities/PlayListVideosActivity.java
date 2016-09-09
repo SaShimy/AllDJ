@@ -62,6 +62,7 @@ public class PlayListVideosActivity extends AppCompatActivity {
     String urlcall_search;
     private static String url = "https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=20&";
     private static String API_KEY = "AIzaSyCqiRYh13_-Fjy6qCMO9zRP1reaG4S2K6w";
+    public String userName = "";
 
 
     @Override
@@ -73,7 +74,7 @@ public class PlayListVideosActivity extends AppCompatActivity {
         final String userToken = getIntent().getExtras().getString("userToken");
         final String playlistId = getIntent().getExtras().getString("playlistId");
         final String name = getIntent().getExtras().getString("name");
-
+        userName = getIntent().getExtras().getString("userName");
         // On récupère les éléments du layout
         playlist_title = (TextView) findViewById(R.id.tV_titlepl);
         listView_videos = (SwipeMenuListView) findViewById(R.id.listView_videos);
@@ -202,6 +203,7 @@ public class PlayListVideosActivity extends AppCompatActivity {
                                                         Activity.putExtra("videoId", tmp.getJSONObject("id").getString("videoId"));
                                                         Activity.putExtra("channelTitle", tmp.getJSONObject("snippet").getString("channelTitle"));
                                                         Activity.putExtra("thumbnailUrl", thumbnailurl);
+                                                        Activity.putExtra("userName", userName);
 
                                                     } catch (JSONException e) {
                                                         e.printStackTrace();

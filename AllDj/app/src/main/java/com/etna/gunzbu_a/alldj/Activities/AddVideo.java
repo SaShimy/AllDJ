@@ -33,6 +33,7 @@ public class AddVideo extends YouTubeBaseActivity implements YouTubePlayer.OnIni
     public static final String KEY_NAME = "name";
     public static final String KEY_IMGURL = "imgUrl";
     public static String VIDEOID = "toto";
+    public String userName = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +48,7 @@ public class AddVideo extends YouTubeBaseActivity implements YouTubePlayer.OnIni
         VIDEOID = getIntent().getExtras().getString("videoId");
         final String playlistId = getIntent().getExtras().getString("playlistId");
         final String playlistName = getIntent().getExtras().getString("playlistName");
-
+        userName = getIntent().getExtras().getString("userName");
         TextView tv_Channel = (TextView) findViewById(R.id.tV_channel);
         TextView tv_Title = (TextView) findViewById(R.id.tV_title);
 
@@ -102,6 +103,7 @@ public class AddVideo extends YouTubeBaseActivity implements YouTubePlayer.OnIni
                 Activity.putExtra("userToken", userToken);
                 Activity.putExtra("playlistId", playlistId);
                 Activity.putExtra("playlistName", playlistName);
+                Activity.putExtra("userName", userName);
                 startActivity(Activity);
             }
         });

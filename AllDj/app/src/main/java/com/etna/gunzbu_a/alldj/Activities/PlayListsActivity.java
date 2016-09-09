@@ -166,6 +166,7 @@ public class PlayListsActivity extends AppCompatActivity {
                                 Activity.putExtra("name", response.getJSONObject(position).getString("name"));
                                 Activity.putExtra("isPublic", response.getJSONObject(position).getString("isPublic"));
                                 Activity.putExtra("userToken", userToken);
+                                Activity.putExtra("userName", userName);
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
