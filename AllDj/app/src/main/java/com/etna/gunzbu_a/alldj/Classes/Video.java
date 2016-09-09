@@ -1,4 +1,4 @@
-package com.etna.gunzbu_a.alldj;
+package com.etna.gunzbu_a.alldj.Classes;
 
 /**
  * Created by SuChi on 01/09/2016.

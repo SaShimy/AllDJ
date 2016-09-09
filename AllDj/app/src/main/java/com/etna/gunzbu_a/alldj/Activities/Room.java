@@ -1,7 +1,6 @@
-package com.etna.gunzbu_a.alldj;
+package com.etna.gunzbu_a.alldj.Activities;
 
 import android.app.AlertDialog;
-import android.app.ListActivity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -21,19 +20,22 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.android.gms.appdatasearch.GetRecentContextCall;
+import com.etna.gunzbu_a.alldj.Classes.BasicCallback;
+import com.etna.gunzbu_a.alldj.Adapters.ChatAdapter;
+import com.etna.gunzbu_a.alldj.ChatConstants;
+import com.etna.gunzbu_a.alldj.Classes.ChatMessage;
+import com.etna.gunzbu_a.alldj.R;
+import com.etna.gunzbu_a.alldj.Classes.Video;
+import com.etna.gunzbu_a.alldj.Adapters.videoAdapter;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
@@ -180,7 +182,6 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(Room.this, error.toString(), Toast.LENGTH_LONG).show();
                         Log.v("ERR", error.toString());
                     }
                 }) {
@@ -429,7 +430,7 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(Room.this, error.toString(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(Room.this, "Vous n'avez pas pu rejoindre la file d'attente.", Toast.LENGTH_LONG).show();
                         Log.v("ERR", error.toString());
                     }
                 }) {
@@ -468,7 +469,7 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(Room.this, error.toString(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(Room.this, "La musique n'a pas pu être changée.", Toast.LENGTH_LONG).show();
                         Log.v("ERR", error.toString());
                     }
                 }) {
@@ -933,15 +934,12 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
             if (gcmRegId.isEmpty()) {
                 registerInBackground();
             }
-//            else {
-//                Toast.makeText(this,"Registration ID already exists: " + gcmRegId,Toast.LENGTH_SHORT).show();
-//            }
         } else {
             Log.e("GCM-register", "No valid Google Play Services APK found.");
         }
     }
 
-    
+
     private void gcmUnregister() {
         new UnregisterTask().execute();
     }
@@ -1083,7 +1081,7 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
     @Override
     public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult youTubeInitializationResult) {
         Log.v("failure", String.valueOf(youTubeInitializationResult));
-        Toast.makeText(this, "Failured to Initialize!", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "Incident lors du chargement de la vidéo Youtube.", Toast.LENGTH_LONG).show();
     }
 
     private YouTubePlayer.PlaybackEventListener playbackEventListener = new YouTubePlayer.PlaybackEventListener() {

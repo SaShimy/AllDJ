@@ -12,31 +12,30 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Login">
+        <activity android:name=".Activities.Login">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Home" />
-        <activity android:name=".Room"
+        <activity android:name=".Activities.Home" />
+        <activity android:name=".Activities.Room"
             android:fitsSystemWindows="true"
             android:windowSoftInputMode="adjustPan|adjustResize"/>
-        <activity android:name=".SignUp" />
-        <activity android:name=".Profile"/>
+        <activity android:name=".Activities.SignUp" />
+        <activity android:name=".Activities.Profile"/>
 
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
         <activity
-            android:name=".PlayListsActivity"
+            android:name=".Activities.PlayListsActivity"
             android:label="@string/title_activity_play_lists"
             android:theme="@style/AppTheme" />
-        <activity android:name=".PlayListVideosActivity" />
-        <activity android:name=".Search" />
-        <activity android:name=".AddVideo"></activity>
+        <activity android:name=".Activities.PlayListVideosActivity" />
+        <activity android:name=".Activities.AddVideo"></activity>
     </application>
 
 </manifest>

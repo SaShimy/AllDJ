@@ -1,8 +1,6 @@
-package com.etna.gunzbu_a.alldj;
+package com.etna.gunzbu_a.alldj.Activities;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,15 +19,16 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
+import com.etna.gunzbu_a.alldj.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Profile extends AppCompatActivity {
+    //Initialisation des key pour les requêtes POST
     public static final String KEY_FNAME = "firstname";
     public static final String KEY_LNAME = "lastname";
     public static final String KEY_EMAIL = "mail";
@@ -88,10 +87,8 @@ public class Profile extends AppCompatActivity {
                             ImageView profilePic = (ImageView) findViewById(R.id.profilePic);
                             String sURL = jResponse.getJSONObject("avatar").getString("path");
                             Log.v(TAG, sURL);
+                            //Affiche la photo de profil de l'utilisateur
                             Glide.with(Profile.this).load(sURL).into(profilePic);
-                            //URL url = new URL();
-                            //Bitmap bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream());
-                            //profilePic.setImageBitmap(bmp);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -100,7 +97,7 @@ public class Profile extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(Profile.this, error.toString(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(Profile.this, "Erreur lors du chargement du profil.", Toast.LENGTH_LONG).show();
                         Log.v("ERR", error.toString());
                     }
                 }) {
@@ -149,7 +146,7 @@ public class Profile extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(Profile.this, error.toString(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(Profile.this, "Les informations n'ont pas pu être mises à jour.", Toast.LENGTH_LONG).show();
                         Log.v("ERR", error.toString());
                     }
                 }) {
@@ -175,6 +172,7 @@ public class Profile extends AppCompatActivity {
         RequestQueue requestQueue = Volley.newRequestQueue(Profile.this);
         requestQueue.add(stringRequest);
     }
+    //Préparation à l'envoi notre image pour une future amélioration
     private void sendAvatar(final String userToken) {
         int PICK_IMAGE_REQUEST = 1;
         Intent intent = new Intent();

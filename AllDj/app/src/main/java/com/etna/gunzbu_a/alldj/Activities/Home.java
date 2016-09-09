@@ -1,4 +1,4 @@
-package com.etna.gunzbu_a.alldj;
+package com.etna.gunzbu_a.alldj.Activities;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -9,9 +9,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.ListViewCompat;
 import android.support.v7.widget.Toolbar;
-import android.text.InputType;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -23,7 +21,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -31,16 +28,17 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.etna.gunzbu_a.alldj.R;
+import com.etna.gunzbu_a.alldj.Classes.Video;
+import com.etna.gunzbu_a.alldj.Adapters.videoAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -50,6 +48,7 @@ public class Home extends AppCompatActivity {
     public static final String KEY_NAME = "name";
     public static final String KEY_TYPES = "types";
 
+    //Empêche l'utilisateur d'utiliser le bouton Back de son téléphone
     @Override
     public void onBackPressed() {
     }
@@ -63,6 +62,7 @@ public class Home extends AppCompatActivity {
         final String userName = getIntent().getExtras().getString("userName");
         final ProgressBar spinner = (ProgressBar)findViewById(R.id.progressBar);
         final Button disconnectButton = (Button) findViewById(R.id.logout);
+        //Préparation de tous les évènements OnClick des bouttons
         disconnectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -112,7 +112,6 @@ public class Home extends AppCompatActivity {
                 swipeContainer.setRefreshing(false);
             }
         });
-        Log.v(TAG, userToken);
     }
     private void prepareToolbar() {
         final Toolbar mToolbar = (Toolbar) findViewById(R.id.tool_bar);
@@ -138,6 +137,7 @@ public class Home extends AppCompatActivity {
         ArrayAdapter<String> stringAdapter = new ArrayAdapter<String>(Home.this , android.R.layout.simple_list_item_1, menu);
         list.setAdapter(stringAdapter);
     }
+    //Fonction de création de l'alerte pour rajouter un nouveau salon
     private void createAlert(final String userToken, final ProgressBar spinner, final ListView Rooms, final String userName, final ArrayList<String> types) {
         AlertDialog.Builder builder = new AlertDialog.Builder(Home.this);
         builder.setTitle("Ajout d'un salon");
@@ -181,7 +181,7 @@ public class Home extends AppCompatActivity {
                         new Response.ErrorListener() {
                             @Override
                             public void onErrorResponse(VolleyError error) {
-                                Toast.makeText(Home.this, error.toString(), Toast.LENGTH_LONG).show();
+                                Toast.makeText(Home.this, "Incident lors de la création du salon.", Toast.LENGTH_LONG).show();
                                 Log.v("ERR", error.toString());
                             }
                         }) {
@@ -195,7 +195,6 @@ public class Home extends AppCompatActivity {
                         Map<String, String> params = new HashMap<String, String>();
                         params.put(KEY_NAME, name);
                         params.put(KEY_TYPES, type);
-                        Log.v("PAR", params.toString());
                         return params;
                     }
 
@@ -215,6 +214,7 @@ public class Home extends AppCompatActivity {
 
         builder.show();
     }
+    //Fonction de création de la liste des salons
     private void createList(final ProgressBar spinner, final ListView Rooms, final String userName, final String userToken){
         RequestQueue queue = Volley.newRequestQueue(Home.this);
 
@@ -227,7 +227,6 @@ public class Home extends AppCompatActivity {
                         for (int i = 0; i < response.length(); i++){
                             try {
                                 String thumbnailurl = new String();
-                                Log.v(TAG, response.getJSONObject(i).getString("musicYtId"));
                                 if (response.getJSONObject(i).getString("musicYtId") == "null") {
                                     thumbnailurl = "http://www.2ememain.be/css/3148/images/pas-de-photo.png";
                                 }
@@ -242,10 +241,6 @@ public class Home extends AppCompatActivity {
                                 e.printStackTrace();
                             }
                         }
-
-                        /*ArrayAdapter<String> myAdapter = new ArrayAdapter<String>(Home.this , android.R.layout.simple_list_item_1, rooms);
-                        assert Rooms != null;
-                        Rooms.setAdapter(myAdapter);*/
                         Rooms.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                             @Override
                             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -269,6 +264,7 @@ public class Home extends AppCompatActivity {
         });
         queue.add(jsonRequest);
     }
+    //Création d'un nouveau salon
     private void newRoom(final String userToken, final ProgressBar spinner, final ListView Rooms, final String userName) {
         RequestQueue queue = Volley.newRequestQueue(Home.this);
 

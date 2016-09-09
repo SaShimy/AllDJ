@@ -1,8 +1,7 @@
-package com.etna.gunzbu_a.alldj;
+package com.etna.gunzbu_a.alldj.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -15,6 +14,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.etna.gunzbu_a.alldj.R;
 import com.google.android.youtube.player.YouTubeBaseActivity;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
@@ -59,49 +59,6 @@ public class AddVideo extends YouTubeBaseActivity implements YouTubePlayer.OnIni
 
         // Requête pour ajouter la vidéo à la playlist
         RequestToAddBtn(RequestAddBtn, title, thumbnailUrl, userToken, playlistId, playlistName);
-        /*RequestAddBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                RequestQueue queue = Volley.newRequestQueue(AddVideo.this);
-                StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://apifreshdj.cloudapp.net/playlist/api/"+playlistId+"/music/add",
-                        new Response.Listener<String>() {
-                            @Override
-                            public void onResponse(String response) {
-                            }
-                        },
-                        new Response.ErrorListener() {
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
-                                Toast.makeText(AddVideo.this, error.toString(), Toast.LENGTH_LONG).show();
-                                Log.v("ERR", error.toString());
-                            }
-                        }) {
-                    @Override
-                    protected Map<String, String> getParams() {
-                        Map<String, String> params = new HashMap<>();
-                        params.put(KEY_NAME, title);
-                        params.put(KEY_IMGURL, thumbnailUrl);
-                        params.put(KEY_MUSICID, VIDEOID);
-                        Log.v("PAR", params.toString());
-                        return params;
-                    }
-
-                    public Map<String, String> getHeaders() {
-                        Map<String, String> header = new HashMap<String, String>();
-                        header.put("Authorization", "Bearer " + userToken);
-                        return header;
-                    }
-                };
-                queue.add(stringRequest);
-                Toast.makeText(AddVideo.this, "Musique ajoutée.", Toast.LENGTH_LONG).show();
-                Intent Activity = new Intent(AddVideo.this, PlayListsActivity.class);
-                Activity.putExtra("userToken", userToken);
-                Activity.putExtra("playlistId", playlistId);
-                Activity.putExtra("playlistName", playlistName);
-                startActivity(Activity);
-            }
-        });*/
-
         /** Initializing YouTube player view **/
         YouTubePlayerView youTubePlayerView = (YouTubePlayerView) findViewById(R.id.youtube_player);
         youTubePlayerView.initialize(API_KEY, this);
@@ -121,7 +78,6 @@ public class AddVideo extends YouTubeBaseActivity implements YouTubePlayer.OnIni
                         new Response.ErrorListener() {
                             @Override
                             public void onErrorResponse(VolleyError error) {
-                                Toast.makeText(AddVideo.this, error.toString(), Toast.LENGTH_LONG).show();
                                 Log.v("ERR", error.toString());
                             }
                         }) {
@@ -131,7 +87,6 @@ public class AddVideo extends YouTubeBaseActivity implements YouTubePlayer.OnIni
                         params.put(KEY_NAME, title);
                         params.put(KEY_IMGURL, thumbnailUrl);
                         params.put(KEY_MUSICID, VIDEOID);
-                        Log.v("PAR", params.toString());
                         return params;
                     }
 
@@ -170,7 +125,7 @@ public class AddVideo extends YouTubeBaseActivity implements YouTubePlayer.OnIni
     }
     @Override
     public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult youTubeInitializationResult) {
-        Toast.makeText(this, "Failured to Initialize!", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "Incident lors du chargement de la vidéo.", Toast.LENGTH_LONG).show();
     }
 
     private YouTubePlayer.PlaybackEventListener playbackEventListener = new YouTubePlayer.PlaybackEventListener() {

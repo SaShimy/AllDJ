@@ -1,4 +1,4 @@
-package com.etna.gunzbu_a.alldj;
+package com.etna.gunzbu_a.alldj.Classes;
 
 import android.util.Log;
 

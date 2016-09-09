@@ -1,4 +1,4 @@
-package com.etna.gunzbu_a.alldj;
+package com.etna.gunzbu_a.alldj.Activities;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -15,6 +15,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.etna.gunzbu_a.alldj.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -23,6 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class SignUp extends AppCompatActivity {
+    //Initialisation des key pour les requêtes POST
     public static final String KEY_USERNAME = "login";
     public static final String KEY_PASSWORD = "password";
     public static final String KEY_EMAIL = "mail";
@@ -43,10 +45,11 @@ public class SignUp extends AppCompatActivity {
         edConfirmation = (EditText) findViewById(R.id.passwordConfirmation);
 
         assert signUp != null;
+
+        //Bouton d'inscription
         signUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.v("SU", "pass :" + edPassword.getText().toString() + " et conf :" + edConfirmation.getText().toString());
                 if (edConfirmation.getText().toString().equals(edPassword.getText().toString()))
                     signUp();
                 else
@@ -54,6 +57,7 @@ public class SignUp extends AppCompatActivity {
             }
         });
     }
+    //Fonction de signUp : post sur la route de notre API
     private void signUp() {
         final String username = edUsername.getText().toString().trim();
         final String password = edPassword.getText().toString().trim();
@@ -76,7 +80,7 @@ public class SignUp extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(SignUp.this, error.toString(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(SignUp.this, "Inscription impossible.", Toast.LENGTH_LONG).show();
                         Log.v("ERR", error.toString());
                     }
                 }) {

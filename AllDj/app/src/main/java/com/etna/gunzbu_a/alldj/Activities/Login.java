@@ -1,16 +1,12 @@
-package com.etna.gunzbu_a.alldj;
+package com.etna.gunzbu_a.alldj.Activities;
 
 import android.content.Intent;
-import android.media.Image;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -19,6 +15,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.etna.gunzbu_a.alldj.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,6 +25,7 @@ import java.util.Map;
 
 public class Login extends AppCompatActivity {
 
+    //Initialisation des key pour les requêtes POST
     public static final String KEY_USERNAME = "username";
     public static final String KEY_PASSWORD = "password";
     public static final String KEY_GRANTYPE = "grant_type";
@@ -38,6 +36,7 @@ public class Login extends AppCompatActivity {
     EditText edPassword;
     private String TAG = "Login";
 
+    //Permet à l'utilisateur de quitter l'appli
     @Override
     public void onBackPressed() {
         this.finishAffinity();
@@ -66,6 +65,7 @@ public class Login extends AppCompatActivity {
         });
     }
     private void logIn() {
+        //Récupération des input de l'utilisateur
         edUsername = (EditText) findViewById(R.id.loginUsername);
         edPassword = (EditText) findViewById(R.id.loginPassword);
         final String username = edUsername.getText().toString().trim();
@@ -88,7 +88,7 @@ public class Login extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(Login.this,error.toString(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(Login.this,"Nom d'utilisateur ou mot de passe incorrect.", Toast.LENGTH_LONG).show();
                         Log.v("ERR", error.toString());
                     }
                 }){

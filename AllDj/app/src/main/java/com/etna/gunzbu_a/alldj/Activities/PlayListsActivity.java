@@ -1,26 +1,22 @@
-package com.etna.gunzbu_a.alldj;
+package com.etna.gunzbu_a.alldj.Activities;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ApplicationInfo;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
@@ -37,17 +33,17 @@ import com.baoyz.swipemenulistview.SwipeMenu;
 import com.baoyz.swipemenulistview.SwipeMenuCreator;
 import com.baoyz.swipemenulistview.SwipeMenuItem;
 import com.baoyz.swipemenulistview.SwipeMenuListView;
+import com.etna.gunzbu_a.alldj.Classes.PlayList;
+import com.etna.gunzbu_a.alldj.Adapters.PlayListAdapter;
+import com.etna.gunzbu_a.alldj.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-
 
 public class PlayListsActivity extends AppCompatActivity {
 
@@ -197,7 +193,7 @@ public class PlayListsActivity extends AppCompatActivity {
                                                 new Response.ErrorListener() {
                                                     @Override
                                                     public void onErrorResponse(VolleyError error) {
-                                                        Toast.makeText(PlayListsActivity.this,error.toString(), Toast.LENGTH_LONG).show();
+                                                        Toast.makeText(PlayListsActivity.this,"La playlist n'a pas pu être supprimée.", Toast.LENGTH_LONG).show();
                                                     }
                                                 }){
                                             public Map<String, String> getHeaders() {
@@ -277,7 +273,7 @@ public class PlayListsActivity extends AppCompatActivity {
                             new Response.ErrorListener() {
                                 @Override
                                 public void onErrorResponse(VolleyError error) {
-                                    Toast.makeText(PlayListsActivity.this, error.toString(), Toast.LENGTH_LONG).show();
+                                    Toast.makeText(PlayListsActivity.this, "La playlist n'a pas pu être créée.", Toast.LENGTH_LONG).show();
                                     Log.v("ERR", error.toString());
                                 }
                             }) {
@@ -286,7 +282,6 @@ public class PlayListsActivity extends AppCompatActivity {
                             Map<String, String> params = new HashMap<>();
                             params.put(KEY_NAME, name);
                             params.put(KEY_ISPUBLIC, ispublic);
-                            Log.v("PAR", params.toString());
                             return params;
                         }
 
@@ -298,7 +293,7 @@ public class PlayListsActivity extends AppCompatActivity {
                     };
                     queue.add(stringRequest);
                 }
-                Toast.makeText(PlayListsActivity.this,"Votre nouvelle playlist " + " a été créée.", Toast.LENGTH_LONG).show();
+                Toast.makeText(PlayListsActivity.this,"Votre nouvelle playlist a été créée.", Toast.LENGTH_LONG).show();
             }
         });
     }

@@ -1,4 +1,4 @@
-package com.etna.gunzbu_a.alldj;
+package com.etna.gunzbu_a.alldj.Activities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -28,11 +28,13 @@ import com.baoyz.swipemenulistview.SwipeMenu;
 import com.baoyz.swipemenulistview.SwipeMenuCreator;
 import com.baoyz.swipemenulistview.SwipeMenuItem;
 import com.baoyz.swipemenulistview.SwipeMenuListView;
+import com.etna.gunzbu_a.alldj.R;
+import com.etna.gunzbu_a.alldj.Classes.Video;
+import com.etna.gunzbu_a.alldj.Adapters.videoAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -179,7 +181,6 @@ public class PlayListVideosActivity extends AppCompatActivity {
                                                         // la requête mais vu qu'on a trié pour faire en sorte de virer les chaînes
                                                         // YT donc si on a position = 3 c'est pas forcément l'élément 3 de la réponse
                                                         // Donc j'ai fait une petite manip pour récupérer le bon élément avec position
-                                                        Log.v("position", String.valueOf(position));
                                                         int i = 0,  y = 0;
                                                         for (; y <= position; i++) {
                                                             JSONObject tmp = arr.getJSONObject(i);
@@ -287,7 +288,7 @@ public class PlayListVideosActivity extends AppCompatActivity {
                                     new Response.Listener<String>() {
                                         @Override
                                         public void onResponse(String response) {
-                                            Toast.makeText(PlayListVideosActivity.this,"La musique a été supprimé.", Toast.LENGTH_LONG).show();
+                                            Toast.makeText(PlayListVideosActivity.this,"La musique a été supprimée.", Toast.LENGTH_LONG).show();
                                             // raffraichit la listview pour montrer les modifications de la playlist
                                             show_playlist_videos(queue,userToken,playlistId);
                                         }
@@ -295,7 +296,7 @@ public class PlayListVideosActivity extends AppCompatActivity {
                                     new Response.ErrorListener() {
                                         @Override
                                         public void onErrorResponse(VolleyError error) {
-                                            Toast.makeText(PlayListVideosActivity.this,error.toString(), Toast.LENGTH_LONG).show();
+                                            Toast.makeText(PlayListVideosActivity.this,"La musique n'a pas pu être supprimée", Toast.LENGTH_LONG).show();
                                         }
                                     }){
                                 public Map<String, String> getHeaders() {
