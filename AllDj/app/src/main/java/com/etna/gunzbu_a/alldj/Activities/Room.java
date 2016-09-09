@@ -106,6 +106,7 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
 
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
+        //Sauvegardes des preferences.
         mSharedPrefs = getSharedPreferences(ChatConstants.CHAT_PREFS, MODE_PRIVATE);
 
         Intent i = getIntent();
@@ -116,15 +117,17 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
         username = i.getExtras().getString("username");
         SharedPreferences sp = getSharedPreferences(ChatConstants.CHAT_PREFS,MODE_PRIVATE);
         SharedPreferences.Editor edit = sp.edit();
+        //Sauvegarde du Username
         edit.putString(ChatConstants.CHAT_USERNAME, username);
         edit.apply();
 
         if (!mSharedPrefs.contains(ChatConstants.CHAT_USERNAME)){
-            Intent toLogin = new Intent(this, Room.class);
-            startActivity(toLogin);
+            Intent toRoom = new Intent(this, Room.class);
+            startActivity(toRoom);
             return;
         }
 
+        //Recuperation du nom de la room
         Bundle extras = getIntent().getExtras();
         if (extras != null){
             Log.d("Main-bundle",extras.toString() + " Has Chat: " + extras.getString(ChatConstants.CHAT_ROOM));
@@ -628,8 +631,6 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
                             if (mHereNow != null)
                                 mHereNow.setTitle(String.valueOf(occ));
                             mChatAdapter.setOnlineNow(usersOnline);
-                            if (displayUsers)
-                                alertHereNow(usersOnline);
                         }
                     });
                 } catch (JSONException e) {
@@ -776,7 +777,7 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
     }
 
     /**
-     * Get last 100 messages sent on current channel from history.
+     * Historique des messages : 100 messages au max sinon ils sont effacés
      */
     public void history(){
         this.mPubNub.history(this.channel,100,false,new Callback() {
@@ -856,7 +857,7 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 ChatMessage chatMsg = mChatAdapter.getItem(position);
-                sendNotification(chatMsg.getUsername());
+                //sendNotification(chatMsg.getUsername());
             }
         });
     }
@@ -881,45 +882,9 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
     }
 
     /**
-     * Create an alert dialog with a list of users who are here now.
-     * When a user's name is clicked, get their state information and display it with Toast.
-     * @param userSet
-     */
-    private void alertHereNow(Set<String> userSet){
-        List<String> users = new ArrayList<String>(userSet);
-        LayoutInflater li = LayoutInflater.from(this);
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-        alertDialog.setTitle("Here Now");
-        alertDialog.setNegativeButton("Done", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-        final ArrayAdapter<String> hnAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,users);
-        alertDialog.setAdapter(hnAdapter, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String user = hnAdapter.getItem(which);
-                getStateLogin(user);
-            }
-        });
-        alertDialog.show();
-    }
-
-    /**
-     * Create an alert dialog with a text view to enter a new channel to join. If the channel is
-     *   not empty, unsubscribe from the current channel and join the new one.
-     *   Then, get messages from history and update the channelView which displays current channel.
-     * @param view
-     */
-    public void changeChannel(View view){
-    }
-
-    /**
-     * GCM Functionality.
-     * In order to use GCM Push notifications you need an API key and a Sender ID.
-     * Get your key and ID at - https://developers.google.com/cloud-messaging/
+     * Fonctionnalite Google Cloud Messaging (GCM).
+     * Recuperation d'une cleé API et d'un ID depuis https://developers.google.com/cloud-messaging/
+     * S'enregistrer
      */
 
     private void gcmRegister() {
@@ -939,7 +904,6 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
         }
     }
 
-
     private void gcmUnregister() {
         new UnregisterTask().execute();
     }
@@ -952,25 +916,25 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
         editor.apply();
     }
 
-    public void sendNotification(String toUser) {
-        PnGcmMessage gcmMessage = new PnGcmMessage();
-        JSONObject json = new JSONObject();
-        try {
-            json.put(ChatConstants.GCM_POKE_FROM, this.username);
-            json.put(ChatConstants.GCM_CHAT_ROOM, this.channel);
-            gcmMessage.setData(json);
-
-            PnMessage message = new PnMessage(
-                    this.mPubNub,
-                    toUser,
-                    new BasicCallback(),
-                    gcmMessage);
-            message.put("pn_debug",true); // Subscribe to yourchannel-pndebug on console for reports
-            message.publish();
-        }
-        catch (JSONException e) { e.printStackTrace(); }
-        catch (PubnubException e) { e.printStackTrace(); }
-    }
+//    public void sendNotification(String toUser) {
+//        PnGcmMessage gcmMessage = new PnGcmMessage();
+//        JSONObject json = new JSONObject();
+//        try {
+//            json.put(ChatConstants.GCM_POKE_FROM, this.username);
+//            json.put(ChatConstants.GCM_CHAT_ROOM, this.channel);
+//            gcmMessage.setData(json);
+//
+//            PnMessage message = new PnMessage(
+//                    this.mPubNub,
+//                    toUser,
+//                    new BasicCallback(),
+//                    gcmMessage);
+//            message.put("pn_debug",true); // Subscribe to yourchannel-pndebug on console for reports
+//            message.publish();
+//        }
+//        catch (JSONException e) { e.printStackTrace(); }
+//        catch (PubnubException e) { e.printStackTrace(); }
+//    }
 
     private boolean checkPlayServices() {
         int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);

@@ -13,7 +13,6 @@ public class ChatConstants {
     public static final String CHAT_ROOM     = "CHAT_ROOM";
 
     public static final String JSON_GROUP = "groupMessage";
-    public static final String JSON_DM    = "directMessage";
     public static final String JSON_USER  = "chatUser";
     public static final String JSON_MSG   = "chatMsg";
     public static final String JSON_TIME  = "chatTime";

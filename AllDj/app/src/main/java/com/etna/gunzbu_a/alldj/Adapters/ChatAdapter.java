@@ -131,12 +131,4 @@ public class ChatAdapter extends ArrayAdapter<ChatMessage> {
         calendar.setTimeInMillis(timeStamp);
         return formatter.format(calendar.getTime());
     }
-
-    /**
-     * Clear all values from the values array and update the listview. Used when changing rooms.
-     */
-    public void clearMessages(){
-        this.values.clear();
-        notifyDataSetChanged();
-    }
 }
