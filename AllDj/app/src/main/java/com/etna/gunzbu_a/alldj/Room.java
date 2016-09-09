@@ -200,7 +200,6 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
                     public void onResponse(final JSONObject response) {
                         if(!response.has("message")){
                             try {
-                                VIDEOID = response.getString("music_id");
                                 is_master = response.getBoolean("is_master");
                                 if(is_master == true) {
                                     is_inqueue = false;
@@ -212,18 +211,21 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
                                 else {
                                     TIME_VID = response.getInt("time") * 1000;
                                 }
+
+                                if(is_initialized == false && VIDEOID == response.getString("music_id")) {
+                                    VIDEOID =response.getString("music_id");
+                                    Log.v("initialize", "yes");
+                                    YouTubePlayerView youTubePlayerView = (YouTubePlayerView) findViewById(R.id.youtube_player);
+                                    youTubePlayerView.initialize(API_KEY, Room.this);
+                                    is_initialized  = true;
+                                }
+                                else if (is_initialized == true && VIDEOID == response.getString("music_id")){
+                                    VIDEOID =response.getString("music_id");
+                                    player.setPlayerStyle(YouTubePlayer.PlayerStyle.CHROMELESS);
+                                    player.loadVideo(VIDEOID, TIME_VID);
+                                }
                             } catch (JSONException e) {
                                 e.printStackTrace();
-                            }
-                            if(is_initialized == false) {
-                                Log.v("initialize", "yes");
-                                YouTubePlayerView youTubePlayerView = (YouTubePlayerView) findViewById(R.id.youtube_player);
-                                youTubePlayerView.initialize(API_KEY, Room.this);
-                                is_initialized  = true;
-                            }
-                            else {
-                                player.setPlayerStyle(YouTubePlayer.PlayerStyle.CHROMELESS);
-                                player.loadVideo(VIDEOID, TIME_VID);
                             }
                         }
                     }
