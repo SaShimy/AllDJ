@@ -226,6 +226,7 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
                                 is_initialized  = true;
                             }
                             else {
+                                player.setPlayerStyle(YouTubePlayer.PlayerStyle.CHROMELESS);
                                 player.loadVideo(VIDEOID, TIME_VID);
                             }
                             Log.v("videoid", VIDEOID);
@@ -1182,6 +1183,7 @@ public class Room extends YouTubeBaseActivity implements YouTubePlayer.OnInitial
             //player.loadVideo(VIDEOID);
 
             // play automatically the video at a settime in millisecond 2000ms = 2s 20000ms = 20s
+            player.setPlayerStyle(YouTubePlayer.PlayerStyle.CHROMELESS);
             player.loadVideo(VIDEOID, TIME_VID);
 
         }
